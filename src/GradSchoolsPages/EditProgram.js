@@ -111,31 +111,12 @@ export default class EditProgram extends Component {
     return array;
   };
 
-  checkDepartments = (aDepartment) => {
-    if (this.start) {
-      if (this.changeDepartmentArray.includes(aDepartment))
-        document.getElementById(aDepartment).checked = true;
-    }
-  };
 
-  handleDepartment = (event) => {
-    const target = event.target;
+
+  DepartmentHandle=()=>{
     
-    const temp = this.state.changeDepartmentArray;
-    if (target.checked) {
-        temp.push(target.value);
-        this.setState({
-        departmentArray: temp,
-      });
-    } else {
-      this.setState({
-        departmentArray: this.removeElement(
-          this.state.departmentArray,
-          target.value
-        ),
-      });
-    }
-  };
+  }
+
 
   infoHandler = async () => {
     await this.setState({
@@ -325,28 +306,15 @@ export default class EditProgram extends Component {
 
                       <div class="row">
                         <div class="col-md-12 pr-1">
-                          <label>Departments</label>
-
+                          <label>Departments   <h13 onClick={this.DepartmentHandle} style={{color:"blue", cursor:"pointer"}}>(Change Department)</h13></label>
+                          
                           {this.state.departmentArray.map((aDepartment) => (
-                            <p>{aDepartment}</p>
-                            // <div>
-                            //   <input
-                            //     type="checkbox"
-                            //     id={aDepartment}
-                            //     name="departmentCheckBoc"
-                            //     checked="true"
-                            //     onChange={
-                            //       (this.handleDepartment,
-                            //       this.checkDepartments(aDepartment)
-                            //       )
-                                  
-                            //     }
-                            //   />
-                            //   <label for="sc1"> {aDepartment}</label>
-                            //   <br />
-                            // </div>
+                            <div>
+                              <p>{aDepartment}</p>
+                              
+                              </div>
                           ))}
-                        </div>
+                          </div>
                       </div>
 
                       <div className="row">
