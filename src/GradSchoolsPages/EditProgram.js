@@ -7,17 +7,17 @@ export default class EditProgram extends Component {
   state = {
     programId: this.props.programId,
     currentProgram: {
-        name: "",
-        department:"" ,
-        degree: "",
-        coordinator: "",
-        description: "",
-        announceDate: "",
-        applicationDeadline: "",
-        alesRequirement: "",
-        sgkRequirement: "",
-        masterRequirement: "",
-        quota: 0
+      name: "",
+      department: "",
+      degree: "",
+      coordinator: "",
+      description: "",
+      announceDate: "",
+      applicationDeadline: "",
+      alesRequirement: "",
+      sgkRequirement: "",
+      masterRequirement: "",
+      quota: 0,
     },
     coordinators: [],
     departments: [
@@ -56,6 +56,9 @@ export default class EditProgram extends Component {
     changeDepartmentArray: [],
     changeArray: [],
     start: true,
+    changedAlesRequirement:null,
+    changedSgkRequirement:null,
+    changedMasterRequirement:null,
   };
 
   handleCoordinator = async (event) => {
@@ -69,17 +72,13 @@ export default class EditProgram extends Component {
     });
   };
 
-  handlechange = (event) => {
+  handleChange = (event) => {
     const target = event.target;
     const name = target.name;
     const value = target.value;
-    const temp = this.state.changeArray;
-    temp.push({
-      propName: [name],
-      value: value,
-    });
+
     this.setState({
-      changeArray: temp,
+      [name]: value,
     });
   };
 
@@ -111,34 +110,56 @@ export default class EditProgram extends Component {
     return array;
   };
 
+  DepartmentHandle = () => {
+    document.getElementById("currentDepartments").hidden = true;
+    document.getElementById("changeDepartments").hidden = false;
+  };
 
-
-  DepartmentHandle=()=>{
-    
+  ChangeRequirements=()=>{
+    document.getElementById("currentRequirements").hidden = true;
+    document.getElementById("requirements").hidden = false;
   }
 
+  handleDepartment = (event) => {
+    const target = event.target;
+    const temp = this.state.changeDepartmentArray;
+    if (target.checked) {
+      temp.push(target.value);
+      this.setState({
+        changeDepartmentArray: temp,
+      });
+    } else {
+      this.setState({
+        departmentArray: this.removeElement(
+          this.state.changeDepartmentArray,
+          target.value
+        ),
+      });
+    }
+  };
 
   infoHandler = async () => {
     await this.setState({
+      coordinator: this.state.currentProgram.coordinator,
       name: this.state.currentProgram.name,
       departmentArray: this.state.currentProgram.department.split(","),
-      changeDepartmentArray: this.state.currentProgram.department.split(","),
       degree: this.state.currentProgram.degree,
-      quota: this.state.currentProgram.quota,
       description: this.state.currentProgram.description,
+      announceDate: this.state.currentProgram.announceDate,
+      applicationDeadline: this.state.currentProgram.applicationDeadline,
       alesRequirement: this.state.currentProgram.alesRequirement,
       sgkRequirement: this.state.currentProgram.sgkRequirement,
       masterRequirement: this.state.currentProgram.masterRequirement,
-      announceDate: this.state.currentProgram.announceDate,
-      applicationDeadline: this.state.currentProgram.applicationDeadline,
+      quota: this.state.currentProgram.quota,
     });
+   
   };
+
 
   componentWillMount = async () => {
     await this.jwtHandler();
     await this.infoBringer();
     await this.infoHandler();
-    this.setState({ start: false });
   };
 
   jwtHandler = async () => {
@@ -147,13 +168,12 @@ export default class EditProgram extends Component {
       method: "GET",
       headers: {
         // Authorization: window.localStorage.getItem("token"),
-        Authorization:this.props.token
-        
-            },
+        Authorization: this.props.token,
+      },
     })
       .then((response) =>
         this.setState({
-          coordinators: response.data.payload.accounts ,
+          coordinators: response.data.payload.accounts,
         })
       )
       .catch(() => console.log("Instructor Knowledge couldn't be get!"));
@@ -165,33 +185,64 @@ export default class EditProgram extends Component {
       method: "GET",
       headers: {
         // Authorization: window.localStorage.getItem("token"),
-        Authorization:this.props.token
-       
-           },
+        Authorization: this.props.token,
+      },
     })
       .then((response) =>
         this.setState({
           currentProgram: response.data.payload.program,
-        }),
-       
+        })
       )
       .catch(() => console.log("Program Knowledge couldn't be get!"));
-      console.log(this.state.currentProgram)
+    console.log(this.state.currentProgram);
   };
 
   submit = async (event) => {
     event.preventDefault();
+    var departments;
+    var masterRequirement;
+    var alesRequirement;
+    var sgkRequirement;
+
+    if(this.state.changeDepartmentArray.length===0){
+      departments= this.state.departmentArray
+    }else{
+      departments=this.state.changeDepartmentArray
+    }
+
+    if(this.state.changedAlesRequirement===null){
+      alesRequirement= this.state.alesRequirement
+    }else{
+      alesRequirement=this.state.changedAlesRequirement
+    }
+
+
+    if(this.state.changedMasterRequirement===null){
+      alesRequirement= this.state.masterRequirement
+    }else{
+      alesRequirement=this.state.changedMasterRequirement
+    }
+
+
+    if(this.state.changedSgkRequirement===null){
+      alesRequirement= this.state.sgkRequirement
+    }else{
+      alesRequirement=this.state.changedSgkRequirement
+    }
+
 
     const payload = {
       coordinator: this.state.coordinator,
       name: this.state.name,
-      department: this.state.department,
+      department: departments.toString(),
       degree: this.state.degree,
-      quota: this.state.quota,
       description: this.state.description,
-      alesRequirement: this.state.alesRequirement,
-      sgkRequirement: this.state.sgkRequirement,
-      masterRequirement: this.state.masterRequirement,
+      announceDate:this.state.announceDate,
+      applicationDeadline:this.state.applicationDeadline,
+      alesRequirement: alesRequirement,
+      sgkRequirement: sgkRequirement,
+      masterRequirement: masterRequirement,
+      quota: this.state.quota,
     };
 
     await axios({
@@ -199,6 +250,10 @@ export default class EditProgram extends Component {
         "http://commerchant.herokuapp.com/programs" +
         this.state.currentProgram._id,
       method: "PUT",
+      headers: {
+        // Authorization: window.localStorage.getItem("token"),
+        Authorization: this.props.token,
+      },
       data: payload,
     })
       .then(
@@ -221,7 +276,7 @@ export default class EditProgram extends Component {
                     <h4 className="card-title">Edit Program</h4>
                   </div>
                   <div className="card-body">
-                    <form onSubmit={this.submit}>
+                    <form>
                       <div className="row">
                         <div className="col-md-8 pr-1">
                           <div className="form-group">
@@ -293,6 +348,7 @@ export default class EditProgram extends Component {
                                 this.state.currentProgram.coordinator
                               }
                             >
+
                               {this.state.coordinators.map((aCoordinator) => (
                                 <option key={aCoordinator.email}>
                                   {aCoordinator.name} {aCoordinator.surname}
@@ -306,15 +362,38 @@ export default class EditProgram extends Component {
 
                       <div class="row">
                         <div class="col-md-12 pr-1">
-                          <label>Departments   <h13 onClick={this.DepartmentHandle} style={{color:"blue", cursor:"pointer"}}>(Change Department)</h13></label>
-                          
-                          {this.state.departmentArray.map((aDepartment) => (
-                            <div>
-                              <p>{aDepartment}</p>
-                              
+                          <label>
+                            Departments{" "}
+                            <h13
+                              onClick={this.DepartmentHandle}
+                              style={{ color: "blue", cursor: "pointer" }}
+                            >
+                              (Change Department)
+                            </h13>
+                          </label>
+                          <div id="currentDepartments">
+                            {this.state.departmentArray.map((aDepartment) => (
+                              <div>
+                                <p>{aDepartment}</p>
                               </div>
-                          ))}
+                            ))}
                           </div>
+                          <div id="changeDepartments" hidden>
+                            {this.state.departments.map((aDepartment) => (
+                              <div>
+                                <input
+                                  type="checkbox"
+                                  id="sc1"
+                                  name="sc1"
+                                  value={aDepartment}
+                                  onChange={this.handleDepartment}
+                                />
+                                <label for="sc1"> {aDepartment}</label>
+                                <br />
+                              </div>
+                            ))}
+                          </div>
+                        </div>
                       </div>
 
                       <div className="row">
@@ -327,6 +406,9 @@ export default class EditProgram extends Component {
                               name="degree"
                               onChange={this.handleChange}
                             >
+                              <option value={this.state.degree}>
+                                {this.state.degree}
+                              </option>
                               <option value="master">Master</option>
                               <option value="doctorate">Doctorate</option>
                             </select>
@@ -337,19 +419,42 @@ export default class EditProgram extends Component {
                       <div class="form-group">
                         <label>Requirements</label>
                         <h6></h6>
+                        <h13
+                              onClick={this.ChangeRequirements}
+                              style={{ color: "blue", cursor: "pointer" }}
+                            >
+                              (Change Department)
+                            </h13>
+                        <div id="currentRequirements">
+                            
+                              {this.state.alesRequirement &&
+                              < p>Ales Required</p>
+                              }
+                               {this.state.sgkRequirement &&
+                              < p>SGK Required</p>
+                              }
+                               {this.state.masterRequirement &&
+                              < p>Master Required</p>
+                              }
+                          
+                          </div>
+
+
+                        <div id="requirements" hidden>
                         <input
                           type="checkbox"
                           id="sc1"
-                          name="alesRequirement"
+                          name="changedAlesRequirement"
                           value="True"
                           onChange={this.handleRequirements}
                         />
+
                         <label for="alesRequirement"> Ales Reqiurement</label>
                         <br />
                         <input
                           type="checkbox"
                           id="sc2"
-                          name="sgkRequirement"
+                          name="changedSgkRequirement"
                           value="Photonics"
                           onChange={this.handleRequirements}
                         />
@@ -358,7 +463,7 @@ export default class EditProgram extends Component {
                         <input
                           type="checkbox"
                           id="sc3"
-                          name="masterRequirement"
+                          name="changedMasterRequirement"
                           value="Chemistry"
                           onChange={this.handleRequirements}
                         />
@@ -369,16 +474,19 @@ export default class EditProgram extends Component {
                         <br />
                         <Label for="exampleText">Description</Label>
                         <Input
+                          placeholder={this.state.currentProgram.description}
                           type="textarea"
                           name="description"
                           id="exampleText"
                         />
+                        </div>
                         <br />
                       </div>
 
                       <button
                         type="submit"
                         className="btn btn-info btn-fill pull-right"
+                        onClick={()=>this.submit}
                       >
                         Save Changes
                       </button>

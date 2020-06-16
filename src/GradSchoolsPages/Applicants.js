@@ -21,8 +21,28 @@ export default class Applicants extends Component {
 
   };
 
+
+  ApplicantsInformaionsHandler = async () => {
+    await axios({
+      url: "http://commerchant.herokuapp.com/applications/all",
+      method: "GET",
+      headers: {
+        Authorization : this.props.token
+        },
+    })
+        .then((response) =>(
+        this.setState({ applicationFiles: response.data.payload.applications })
+        )
+      )
+      .catch((err) => console.log(err));
+
+  };
+
+
+
   componentWillMount(){
     this.jwtHandler()
+    this.ApplicantsInformaionsHandler()
   }
 
 

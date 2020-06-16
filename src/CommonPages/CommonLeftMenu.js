@@ -40,10 +40,10 @@ export default class LeftMenu extends Component {
             <ul className="nav">
     
            
-              <li style={{cursor:"pointer"}}>
+              <li style={{cursor:"pointer"} }  onClick={this.programsHandle}>
                 <a className="nav-link" style={{cursor:"pointer"}}>
                   <i className="nc-icon nc-bullet-list-67"></i>
-                  <p onClick={this.programsHandle} style={{cursor:"pointer"}}>Programs</p>
+                  <p style={{cursor:"pointer"}}>Programs</p>
                 </a>
               </li>
            

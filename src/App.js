@@ -26,7 +26,7 @@ import Root from "./Root";
 import Applicant from "./GradSchoolsPages/Applicants";
 import GradschoolLeftMenu from "./GradSchoolsPages/GradschoolLeftMenu";
 import GradschoolPrograms from "./GradSchoolsPages/GradschoolPrograms";
-
+import GradSchoolNotifications from "./GradSchoolsPages/GradSchoolNotifications";
 export default class App extends React.Component {
   state = {
     currentPage: "",
@@ -170,6 +170,8 @@ export default class App extends React.Component {
         return <GradschoolPrograms setProgram={this.setProgram} setCurrentPage={this.setCurrentPage} token={this.state.token} />;
       case "Notification":
         return <Notification token={this.state.token} />;
+        case "GradSchoolNotifications":
+        return <GradSchoolNotifications token={this.state.token} setCurrentPage={this.setCurrentPage}/>;
       case "Applicants":
         return <Applicants token={this.state.token} />;
         case "OpenProgram":
@@ -213,7 +215,7 @@ export default class App extends React.Component {
     var page = this.openPage();
     return(
      <Root page={page} />
-    // <EditProgram token={this.state.token} Program={this.state.program}/>
+    // <Applicant token={this.state.token} Program={this.state.program}/>
     );
   }
 }

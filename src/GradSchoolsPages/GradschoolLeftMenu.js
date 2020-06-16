@@ -31,7 +31,7 @@ state={
   }
 
   notificationHandler=()=>{
-    this.props.setCurrentPage("Notification")
+    this.props.setCurrentPage("GradSchoolNotifications")
     
     this.setActive("notification")
   }
