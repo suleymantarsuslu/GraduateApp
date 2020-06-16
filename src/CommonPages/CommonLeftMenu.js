@@ -25,6 +25,7 @@ export default class LeftMenu extends Component {
             <div className="logo">
               <a className="navbar-brand" >
                 <img
+                style={{cursor:"pointer"}}
                   src={require("../assets/img/iyte_logo-tur.png")}
                   alt=""
                   width="200"
@@ -32,17 +33,17 @@ export default class LeftMenu extends Component {
                   onClick={this.homeHandle}
                 />
               </a>
-              <a  className="simple-text" onClick={this.homeHandle}>
+              <a  className="simple-text" style={{cursor:"pointer"}} onClick={this.homeHandle}>
                 IZTECH Graduate Addmissions
               </a>
             </div>
             <ul className="nav">
     
            
-              <li>
-                <a className="nav-link" >
+              <li style={{cursor:"pointer"}}>
+                <a className="nav-link" style={{cursor:"pointer"}}>
                   <i className="nc-icon nc-bullet-list-67"></i>
-                  <p onClick={this.programsHandle}>Programs</p>
+                  <p onClick={this.programsHandle} style={{cursor:"pointer"}}>Programs</p>
                 </a>
               </li>
            

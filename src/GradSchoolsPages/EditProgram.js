@@ -234,7 +234,7 @@ export default class EditProgram extends Component {
         <div className="content">
           <div className="container-fluid">
             <div className="row">
-              <div className="col-md-8">
+              <div className="col-md-12">
                 <div className="card">
                   <div className="card-header">
                     <h4 className="card-title">Edit Program</h4>
@@ -279,7 +279,7 @@ export default class EditProgram extends Component {
                               className="form-control"
                               placeholder={moment(
                                 this.state.currentProgram.announceDate
-                              ).format("YYYY-MM-DD")}
+                              ).format("DD-MM-YYYY")}
                             />
                           </div>
                         </div>
@@ -294,7 +294,7 @@ export default class EditProgram extends Component {
                               className="form-control"
                               placeholder={moment(
                                 this.state.currentProgram.applicationDeadline
-                              ).format("YYYY-MM-DD")}
+                              ).format("DD-MM-YYYY")}
                             />
                           </div>
                         </div>
@@ -327,23 +327,24 @@ export default class EditProgram extends Component {
                         <div class="col-md-12 pr-1">
                           <label>Departments</label>
 
-                          {this.state.departments.map((aDepartment) => (
-                            <div>
-                              <input
-                                type="checkbox"
-                                id={aDepartment}
-                                name="departmentCheckBoc"
-                                checked="true"
-                                onChange={
-                                  (this.handleDepartment,
-                                  this.checkDepartments(aDepartment)
-                                  )
+                          {this.state.departmentArray.map((aDepartment) => (
+                            <p>{aDepartment}</p>
+                            // <div>
+                            //   <input
+                            //     type="checkbox"
+                            //     id={aDepartment}
+                            //     name="departmentCheckBoc"
+                            //     checked="true"
+                            //     onChange={
+                            //       (this.handleDepartment,
+                            //       this.checkDepartments(aDepartment)
+                            //       )
                                   
-                                }
-                              />
-                              <label for="sc1"> {aDepartment}</label>
-                              <br />
-                            </div>
+                            //     }
+                            //   />
+                            //   <label for="sc1"> {aDepartment}</label>
+                            //   <br />
+                            // </div>
                           ))}
                         </div>
                       </div>

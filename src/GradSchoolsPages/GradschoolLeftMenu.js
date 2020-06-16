@@ -62,6 +62,7 @@ state={
             <div className="logo">
               <a className="navbar-brand" >
                 <img
+                style={{cursor:"pointer"}}
                   src={require("../assets/img/iyte_logo-tur.png")}
                   alt=""
                   width="200"
@@ -69,7 +70,7 @@ state={
                   onClick={this.homeHandle}
                 />
               </a>
-              <a  onClick={this.homeHandle}  className="simple-text">
+              <a  onClick={this.homeHandle} style={{cursor:"pointer"}} className="simple-text">
                 IZTECH Graduate Addmissions
               </a>
             </div>

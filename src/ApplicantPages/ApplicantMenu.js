@@ -26,13 +26,13 @@ export default class ApplicantMenu extends Component {
         
             <ul className="navbar-nav ml-auto">
               <li className="nav-item">
-                <a className="nav-link" onClick={this.accountHandler} >
+                <a className="nav-link" onClick={this.accountHandler} style={{cursor:"pointer"}} >
     <span className="no-icon">{this.props.profile.name} {this.props.profile.surname}</span>
                 </a>
               </li>
              
               <li className="nav-item">
-                <a className="nav-link" href="/home" onClick={localStorage.clear()}>
+                <a className="nav-link" href="/home" onClick={localStorage.clear() }  style={{cursor:"pointer"}}>
                   <span className="no-icon">Log out</span>
                 </a>
               </li>

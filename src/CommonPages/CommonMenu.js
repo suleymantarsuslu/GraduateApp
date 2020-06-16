@@ -28,14 +28,14 @@ export default class CommonMenu extends Component {
           >
         
             <ul className="navbar-nav ml-auto">
-            <li className="nav-item">
-                <a className="nav-link" >
-                <span className="no-icon" onClick={ this.registerHandler}  >Register</span>
+            <li className="nav-item" style={{cursor:"pointer"}}>
+                <a className="nav-link" style={{cursor:"pointer"}}>
+                <span className="no-icon" onClick={ this.registerHandler}  style={{cursor:"pointer"}}>Register</span>
                 </a>
               </li>
-              <li className="nav-item">
-                <a className="nav-link" >
-                  <span className="no-icon" onClick={ this.loginHandler}>Log in</span>
+              <li className="nav-item" style={{cursor:"pointer"}}>
+                <a className="nav-link" style={{cursor:"pointer"}}>
+                  <span className="no-icon" onClick={ this.loginHandler} style={{cursor:"pointer"}}>Login</span>
                 </a>
               </li>
             
