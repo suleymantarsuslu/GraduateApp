@@ -4,6 +4,7 @@ import "../assets/img/favicon.ico";
 import { Button, Form, FormGroup, Label, Input, FormText } from "reactstrap";
 import axios from "axios";
 import ReCAPTCHA from "react-google-recaptcha";
+import emailjs from 'emailjs-com';
 
 export default class Register extends Component {
   state = {
@@ -18,6 +19,9 @@ export default class Register extends Component {
     programs: [],
     password2: "",
   };
+
+
+
 
   componentWillMount() {
     this.jwtHandler();
@@ -117,7 +121,7 @@ export default class Register extends Component {
               this.setState({ datas: response }), alert(response.data.message)
             )
           )
-          .catch((err) => console.log(err));
+          .catch((err) => alert(err));
       } else {
         document.getElementById("passwordSame").innerHTML =
           "Passwords are not same!";
@@ -127,7 +131,9 @@ export default class Register extends Component {
 
   onloadCallback = function () {
     this.setState({ isVerified: true });
-  };
+
+   };
+
 
   render() {
     return (
@@ -144,6 +150,7 @@ export default class Register extends Component {
                     <div className="form-group">
                       <Label for="name">Name</Label>
                       <Input
+                      required
                         type="text"
                         name="name"
                         value={this.state.name}
@@ -162,6 +169,7 @@ export default class Register extends Component {
                         value={this.state.username}
                         placeholder="Enter Your Last Name!"
                         onChange={this.handlechange}
+                        required
                       />
                     </div>
                   </div>
@@ -178,8 +186,10 @@ export default class Register extends Component {
                         id="exampleFormControlSelect1"
                         name="program"
                         onChange={this.handleProgram}
+                        required
+                        
                       >
-                        <option>Select</option>
+                         <option value="" disabled selected>Select your option</option>
                         {this.state.programs.map((aProgram) => (
                           <option key={aProgram._id}>{aProgram.name}</option>
                         ))}
@@ -196,10 +206,14 @@ export default class Register extends Component {
                         value={this.state.email}
                         placeholder="Enter your e-mail!"
                         onChange={this.handlechange}
+                        required
                       />
                     </div>
                   </div>
                 </div>
+
+
+                <input type="submit" value="Send" onClick={this.sendEmail}/>
 
                 <div className="row">
                   <div className="col-md-6 pl-1">
@@ -211,6 +225,7 @@ export default class Register extends Component {
                         value={this.state.phone}
                         placeholder="05*********"
                         onChange={this.handlechange}
+                        required
                       />
                     </div>
                   </div>
@@ -227,6 +242,7 @@ export default class Register extends Component {
                         id="inputPassword"
                         placeholder="Password"
                         onChange={this.handlechange}
+                        required
                       />
                     </div>
                   </div>
@@ -240,6 +256,7 @@ export default class Register extends Component {
                         id="inputPassword"
                         placeholder="Password"
                         onChange={this.handlePaaword}
+                        required
                       />
                     </div>
                   </div>
@@ -256,6 +273,7 @@ export default class Register extends Component {
                         value={this.state.address}
                         placeholder="Enter Your Address!"
                         onChange={this.handlechange}
+                        required
                       />
                     </div>
                   </div>
@@ -264,6 +282,7 @@ export default class Register extends Component {
                   sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"
                   render="explicit"
                   onChange={this.onloadCallback}
+                  required
                 />
                 <p />
                 <p style={{ color: "red" }} id="emptyField"></p>

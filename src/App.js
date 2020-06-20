@@ -1,38 +1,40 @@
-import React, { Component, PropTypes } from "react";
-import axios from "axios";
-import { Router, Route, browserHistory, IndexRoute } from "react-router";
+import React from "react";
 
-import { Switch, Redirect, BrowserRouter } from "react-router-dom";
 import Login from "./CommonPages/Login";
 import ApplicantMenu from "./ApplicantPages/ApplicantMenu";
 import ApplicantLeftMenu from "./ApplicantPages/ApplicantLeftMenu";
-import { Container, Row, Col } from "reactstrap";
 import Applicants from "./GradSchoolsPages/Applicants";
 import Profile from "./ApplicantPages/Profile";
 import Logout from "./Logout";
 import Programs from "./CommonPages/Programs";
 import Register from "./CommonPages/Register";
-import Footer from "./ApplicantPages/Footer";
 import Notification from "./ApplicantPages/Notification";
-
 import UploadDocuments from "./ApplicantPages/UploadDocuments";
-import ChangePassword from "./ApplicantPages/ChangePassword";
 import OpenProgram from "./GradSchoolsPages/OpenProgram";
 import EditProgram from "./GradSchoolsPages/EditProgram";
 import Dashboard from "./CommonPages/Dashboard";
 import CommonLeftMenu from "./CommonPages/CommonLeftMenu";
 import CommonMenu from "./CommonPages/CommonMenu";
 import Root from "./Root";
-import Applicant from "./GradSchoolsPages/Applicants";
 import GradschoolLeftMenu from "./GradSchoolsPages/GradschoolLeftMenu";
 import GradschoolPrograms from "./GradSchoolsPages/GradschoolPrograms";
 import GradSchoolNotifications from "./GradSchoolsPages/GradSchoolNotifications";
+import Documents from "./GradSchoolsPages/Documents";
+import DepartmentLeftMenu from "./DepartmentPages/DepartmentLeftMenu";
+import SendNotification from "./DepartmentPages/SendNotification";
+import DepartmentInterview from "./DepartmentPages/DepartmentInterview";
+import CreateInterview from "./DepartmentPages/CreateInterview";
+import ApplicantInterview from "./ApplicantPages/ApplicantInterview";
+
+
 export default class App extends React.Component {
   state = {
+    applicationFile: null,
     currentPage: "",
     loginPage: false,
     program: "",
     token: "",
+    currentApplicant: "",
     profile: {
       role: "",
       _id: "",
@@ -58,12 +60,20 @@ export default class App extends React.Component {
     this.setState({ currentCategory: profil });
   };
 
+  setApplicationFile = (anApplicationFile) => {
+    this.setState({ applicationFile: anApplicationFile });
+  };
+
   setProgram = (programId) => {
     this.setState({ program: programId });
   };
 
   setProfile = (aProfile) => {
     this.setState({ profile: aProfile });
+  };
+
+  setCurrentApplicant = (anAplicant) => {
+    this.setState({ currentApplicant: anAplicant });
   };
 
   setCurrentPage = (value) => {
@@ -93,14 +103,7 @@ export default class App extends React.Component {
       case "gradschool":
         return <GradschoolLeftMenu setCurrentPage={this.setCurrentPage} />;
       case "department":
-        return (
-          <Programs
-            setPrograms={this.setPrograms}
-            changeCategory={this.changeCategory}
-            currentCategory={this.state.currentCategory}
-            info={this.state.isLoggedIn}
-          />
-        );
+        return <DepartmentLeftMenu setCurrentPage={this.setCurrentPage} />;
       case "admin":
         return <ApplicantLeftMenu setCurrentPage={this.state.setCurrentPage} />;
 
@@ -134,11 +137,9 @@ export default class App extends React.Component {
         );
       case "department":
         return (
-          <Programs
-            setPrograms={this.setPrograms}
-            changeCategory={this.changeCategory}
-            currentCategory={this.state.currentCategory}
-            info={this.state.isLoggedIn}
+          <ApplicantMenu
+            profile={this.state.profile}
+            setCurrentPage={this.setCurrentPage}
           />
         );
       case "admin":
@@ -165,21 +166,89 @@ export default class App extends React.Component {
       case "Programs":
         return <Programs />;
       case "UploadDocuments":
-        return <UploadDocuments token={this.state.token} />;
-        case "GradschoolPrograms":
-        return <GradschoolPrograms setProgram={this.setProgram} setCurrentPage={this.setCurrentPage} token={this.state.token} />;
+        return (
+          <UploadDocuments
+            token={this.state.token}
+            setCurrentPage={this.setCurrentPage}
+            
+          />
+        );
+      case "GradschoolPrograms":
+        return (
+          <GradschoolPrograms
+            setProgram={this.setProgram}
+            setCurrentPage={this.setCurrentPage}
+            token={this.state.token}
+          />
+        );
       case "Notification":
-        return <Notification token={this.state.token} />;
-        case "GradSchoolNotifications":
-        return <GradSchoolNotifications token={this.state.token} setCurrentPage={this.setCurrentPage}/>;
+        return <Notification token={this.state.token} setCurrentPage={this.setCurrentPage}/>;
+      case "SendNotification":
+        return (
+          <SendNotification
+            token={this.state.token}
+            setCurrentPage={this.setCurrentPage}
+          />
+        );
+      case "GradSchoolNotifications":
+        return (
+          <GradSchoolNotifications
+            token={this.state.token}
+            setCurrentPage={this.setCurrentPage}
+          />
+        );
       case "Applicants":
-        return <Applicants token={this.state.token} />;
-        case "OpenProgram":
+        return (
+          <Applicants
+            token={this.state.token}
+            setCurrentApplicant={this.setCurrentApplicant}
+            setCurrentPage={this.setCurrentPage}
+          />
+        );
+      case "OpenProgram":
         return <OpenProgram token={this.state.token} />;
+
+      case "Documents":
+        return (
+          <Documents
+            token={this.state.token}
+            currentApplicant={this.state.currentApplicant}
+          />
+        );
+
       case "EditProgram":
         return (
-          <EditProgram token={this.state.token} program={this.state.program}/>
+          <EditProgram token={this.state.token} program={this.state.program} />
         );
+
+        case "DepartmentInterview":
+          return (
+            <DepartmentInterview
+              token={this.state.token}
+              setCurrentApplicant={this.setCurrentApplicant}
+              setCurrentPage={this.setCurrentPage}
+            />
+          );
+          case "CreateInterview":
+            return (
+              <CreateInterview
+                token={this.state.token}
+                setCurrentApplicant={this.setCurrentApplicant}
+                setCurrentPage={this.setCurrentPage}
+                currentApplicant={this.state.currentApplicant}
+              />
+            );
+            case "ApplicantInterview":
+            return (
+              <ApplicantInterview
+                token={this.state.token}
+                setCurrentApplicant={this.setCurrentApplicant}
+                setCurrentPage={this.setCurrentPage}
+                currentApplicant={this.state.currentApplicant}
+              />
+            );
+        
+        
       case "Logout":
         return <Logout />;
       default:
@@ -191,6 +260,8 @@ export default class App extends React.Component {
     if (this.state.loginPage) {
       return (
         <Login
+        applicationFile={this.state.applicationFile}
+          setApplicationFile={this.setApplicationFile}
           setProfile={this.setProfile}
           setLogin={this.setLogin}
           setCurrentPage={this.setCurrentPage}
@@ -203,7 +274,7 @@ export default class App extends React.Component {
   };
 
   openPage = () => {
-    var page = new Object();
+    var page ={};
     page.leftmenu = this.openLeftMenu();
     page.menu = this.openMenu();
     page.body = this.openCurrentPage();
@@ -213,9 +284,11 @@ export default class App extends React.Component {
 
   render() {
     var page = this.openPage();
-    return(
-     <Root page={page} />
-    // <Applicant token={this.state.token} Program={this.state.program}/>
+    return (
+      <Root page={page} />
+      // <Applicant token={this.state.token} Program={this.state.program}/>
+      // <Documents/>
+  
     );
   }
 }

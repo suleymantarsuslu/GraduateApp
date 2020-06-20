@@ -26,7 +26,7 @@ export default class ApplicantMenu extends Component {
         
             <ul className="navbar-nav ml-auto">
               <li className="nav-item">
-                <a className="nav-link" onClick={this.accountHandler} style={{cursor:"pointer"}} >
+                <a className="nav-link"  >
     <span className="no-icon">{this.props.profile.name} {this.props.profile.surname}</span>
                 </a>
               </li>

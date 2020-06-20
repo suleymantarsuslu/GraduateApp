@@ -68,14 +68,7 @@ seperate=()=>{
                             <div className="card strpied-tabled-with-hover">
                                 <div className="card-header ">
                                     <h4 className="card-title">Master's Degrees</h4>
-                                    <p>
-                                        The master’s degree generally requires a minimum of one academic year of
-                                        study,
-                                        while the engineer’s degree requires two years. Admission to MIT for the
-                                        master’s degree does not necessarily imply an automatic commitment by
-                                        MIT beyond
-                                        that level of study.
-                                    </p>
+                                 
                                 </div>
                                 <div className="card-body table-full-width table-responsive">
                                     <table className="table table-hover table-striped">
@@ -111,16 +104,7 @@ seperate=()=>{
                             <div className="card strpied-tabled-with-hover">
                                 <div className="card-header ">
                                     <h4 className="card-title">Doctoral Degrees</h4>
-                                    <p>
-                                    A doctoral degree requires the satisfactory completion of an approved
-                                        program of advanced study and original research of high quality. The PhD
-                                        and
-                                        ScD degrees are awarded interchangeably by all departments in the School
-                                        of
-                                        Engineering and the School of Science except in the fields of biology,
-                                        cognitive science, neuroscience, medical engineering, and medical
-                                        physics.
-                                    </p>
+                                   
                                 </div>
                                 <div className="card-body table-full-width table-responsive">
                                     <table className="table table-hover table-striped">

@@ -110,7 +110,7 @@ export default class OpenProgram extends Component {
 
   jwtHandler = async () => {
     await axios({
-      url: "http://commerchant.herokuapp.com/accounts/all",
+      url: "http://commerchant.herokuapp.com/accounts/coordinators",
       method: "GET",
       headers: {
         // Authorization: window.localStorage.getItem("token"),
@@ -119,9 +119,8 @@ export default class OpenProgram extends Component {
     })
       .then((response) =>
         this.setState({
-          coordinators: response.data.payload.accounts.filter(
-            (a) => a.role === "gradschool"
-          ),
+          coordinators: response.data.payload.accounts
+         
         })
       )
       .catch(() => console.log("Programlar alınamadı"));

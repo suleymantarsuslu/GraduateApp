@@ -1,5 +1,4 @@
-import React, { Component } from "react";
-import Footer from "./ApplicantPages/Footer";
+import React from "react";
 
 
 
@@ -31,9 +30,7 @@ export default class Root extends React.Component {
               {this.props.page.login}
                   </div>
             </div>
-            {/* <div className="row">
-              <div className="col-md-12 pr-1"><Footer/></div>
-            </div> */}
+        
           </div>
         </div>
       </div>

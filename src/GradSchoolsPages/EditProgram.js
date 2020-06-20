@@ -198,6 +198,7 @@ export default class EditProgram extends Component {
   };
 
   submit = async (event) => {
+
     event.preventDefault();
     var departments;
     var masterRequirement;
@@ -218,16 +219,16 @@ export default class EditProgram extends Component {
 
 
     if(this.state.changedMasterRequirement===null){
-      alesRequirement= this.state.masterRequirement
+      masterRequirement= this.state.masterRequirement
     }else{
-      alesRequirement=this.state.changedMasterRequirement
+      masterRequirement=this.state.changedMasterRequirement
     }
 
 
     if(this.state.changedSgkRequirement===null){
-      alesRequirement= this.state.sgkRequirement
+      sgkRequirement= this.state.sgkRequirement
     }else{
-      alesRequirement=this.state.changedSgkRequirement
+      sgkRequirement=this.state.changedSgkRequirement
     }
 
 
@@ -247,8 +248,7 @@ export default class EditProgram extends Component {
 
     await axios({
       url:
-        "http://commerchant.herokuapp.com/programs" +
-        this.state.currentProgram._id,
+        "http://commerchant.herokuapp.com/programs"+this.state.currentProgram._id,
       method: "PUT",
       headers: {
         // Authorization: window.localStorage.getItem("token"),
@@ -258,15 +258,15 @@ export default class EditProgram extends Component {
     })
       .then(
         (response) => (
-          this.setState({ datas: response }), alert(response.data.message)
+          this.setState({ datas: response })| alert(response.data.message)
         )
       )
-      .catch(() => console.log("Edit Failed!"));
+      .catch((err) => console.log(err));
   };
 
   render() {
     return (
-      <div classNameName="wrapper">
+      <div className="wrapper">
         <div className="content">
           <div className="container-fluid">
             <div className="row">
@@ -337,20 +337,17 @@ export default class EditProgram extends Component {
 
                         <div className="col-md-8 pr-1">
                           <div className="form-group">
-                            <label for="coordinator">Coordinator</label>
+                            <label htmlFor="coordinator">Coordinator</label>
 
                             <select
                               name="coordinator"
                               className="form-control"
                               id="vcoordinator"
                               onChange={this.handleCoordinator}
-                              placeholder={
-                                this.state.currentProgram.coordinator
-                              }
                             >
-
+                            <option value="" disabled selected>{this.state.currentProgram.coordinator.name} {this.state.currentProgram.coordinator.surname}</option>
                               {this.state.coordinators.map((aCoordinator) => (
-                                <option key={aCoordinator.email}>
+                                <option key={aCoordinator._id}>
                                   {aCoordinator.name} {aCoordinator.surname}
                                 </option>
                               ))}
@@ -380,15 +377,16 @@ export default class EditProgram extends Component {
                           </div>
                           <div id="changeDepartments" hidden>
                             {this.state.departments.map((aDepartment) => (
-                              <div>
+                              <div  key={aDepartment._id}>
                                 <input
+                               
                                   type="checkbox"
                                   id="sc1"
                                   name="sc1"
                                   value={aDepartment}
                                   onChange={this.handleDepartment}
                                 />
-                                <label for="sc1"> {aDepartment}</label>
+                                <label htmlFor="sc1"> {aDepartment}</label>
                                 <br />
                               </div>
                             ))}
@@ -449,7 +447,7 @@ export default class EditProgram extends Component {
                           onChange={this.handleRequirements}
                         />
 
-                        <label for="alesRequirement"> Ales Reqiurement</label>
+                        <label htmlFor="alesRequirement"> Ales Reqiurement</label>
                         <br />
                         <input
                           type="checkbox"
@@ -458,7 +456,7 @@ export default class EditProgram extends Component {
                           value="Photonics"
                           onChange={this.handleRequirements}
                         />
-                        <label for="sgkRequirement"> SGK Requirement</label>
+                        <label htmlFor="sgkRequirement"> SGK Requirement</label>
                         <br />
                         <input
                           type="checkbox"
@@ -467,12 +465,12 @@ export default class EditProgram extends Component {
                           value="Chemistry"
                           onChange={this.handleRequirements}
                         />
-                        <label for="masterRequirement">
+                        <label htmlFor="masterRequirement">
                           {" "}
                           Master Requirement
                         </label>
                         <br />
-                        <Label for="exampleText">Description</Label>
+                        <Label htmlFor="exampleText">Description</Label>
                         <Input
                           placeholder={this.state.currentProgram.description}
                           type="textarea"
@@ -486,7 +484,7 @@ export default class EditProgram extends Component {
                       <button
                         type="submit"
                         className="btn btn-info btn-fill pull-right"
-                        onClick={()=>this.submit}
+                        onClick={this.submit}
                       >
                         Save Changes
                       </button>

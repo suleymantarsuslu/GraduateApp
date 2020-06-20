@@ -16,7 +16,7 @@ export default class GradSchoolNotifications extends Component {
 
 
   newNotificationHandler=()=>{
-    this.props.setCurrentPage("OpenProgram")
+    this.props.setCurrentPage("SendNotification")
     }
 
   takeNotifications = async () => {
@@ -48,6 +48,10 @@ export default class GradSchoolNotifications extends Component {
     this.setState({ date: aNotification.date });
   };
 
+  newNotificationHandler=()=>{
+    this.props.setCurrentPage("SendNotification")
+  }
+
   deleteNot = async (aNot) => {
     await axios({
       url: "http://commerchant.herokuapp.com/notifications/" + aNot._id,
@@ -58,7 +62,7 @@ export default class GradSchoolNotifications extends Component {
     })
       .then((response) =>
         this.setState({ nots: response.data.payload.notifications }),
-        this.forceUpdate(),
+        this.props.setCurrentPage(""),
         document.getElementById("deleted").innerHTML= "The document is deleted"
       )
       .catch(() => console.log("Notifications are Couldn't be shown"));
@@ -104,7 +108,7 @@ export default class GradSchoolNotifications extends Component {
       <div className="wrapper">
         <div class="content">
           <div class="container-fluid">
-          <p onClick={this.newNotificationHandler} style={{color:"blue", textAlign:"right", cursor:"pointer"}}>Send A Notification</p>
+          <p onClick={this.newNotificationHandler} style={{color:"blue", textAlign:"right", cursor:"pointer"}}>Send Notification</p>
            
             <div class="row">
               <div class="col-md-4">

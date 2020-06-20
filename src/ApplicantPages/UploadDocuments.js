@@ -5,29 +5,10 @@ import { relativeTimeThreshold } from "moment";
 
 export default class Profile extends Component {
   state = {
-    program:{
-      alesReq: null,
-    sgk: null,
-    experience: null,
-    ALESResult: null,
-    englishExamResult: null,
-    referenceLetter: null,
-    referenceLetter2: null,
-    statementOfPurpose: null,
-    ALESResultInput: null,
-    experinceInput: null,
-    passport: null,
-    passportInput: null,
-    permissionLetter: null,
-    permissionLetterInput: null,
-    mastersTranscriptInput: null,
-    image: image1,
-    underTrans:null,
-    },
     alesReq: null,
     sgk: null,
     experience: null,
-    ALESResult: null,
+    alesResult: null,
     englishExamResult: null,
     referenceLetter: null,
     referenceLetter2: null,
@@ -41,7 +22,79 @@ export default class Profile extends Component {
     mastersTranscriptInput: null,
     image: image1,
     underTrans:null,
+    documents:null
+    
   };
+
+  getAccountId= async ()=>{
+    await axios({
+      url: "http://commerchant.herokuapp.com/accounts/profile",
+      method: "GET",
+      headers: {
+        Authorization : this.props.token
+        },
+    })
+      .then((response) =>(
+       this.props.setApplicationFile( response.data.payload.application))
+
+      )
+      .catch(() => console.log("Profil gösterilemedi"));
+
+      
+
+}
+
+
+
+
+componentWillMount(){
+  this.jwtHandler()
+}
+ 
+jwtHandler = async () => {
+  await axios({
+    url: "http://commerchant.herokuapp.com/accounts/profile",
+    method: "GET",
+    headers: {
+      // Authorization: window.localStorage.getItem("token"),
+      Authorization : this.props.token
+      },
+  })
+    .then((response) =>
+      this.setState({ accountId: response.data.payload.account._id })
+
+    )
+    .catch(() => console.log("Profil gösterilemedi"));
+    console.log("Account id is : ", this.state.accountId)
+    // this.documentHandler()
+};
+
+
+
+
+
+
+  documentHandler = async () => {
+    await axios({
+      url: "http://commerchant.herokuapp.com/documents/all",
+      method: "GET",
+      headers: {
+        Authorization : this.props.token
+       },
+    })
+        .then((response) =>(
+        this.setState({ documents: response.data.payload.documents.filter(aDocument => aDocument.originalname.includes(this.props.applicantId)) })
+        )
+      )
+      .catch((err) => console.log(err));
+      console.log("Documents are ",this.state.documents)
+  };
+
+
+
+
+
+
 
 
 
@@ -56,7 +109,7 @@ export default class Profile extends Component {
 
     var formdata = new FormData();
     formdata.append("title", name);
-    formdata.append("document", fileInput, fileName);
+    formdata.append("document", fileInput,this.state.accountId);
 
     var requestOptions = {
       method: "POST",
@@ -71,7 +124,9 @@ export default class Profile extends Component {
       .catch((error) => console.log("error", error));
   };
 
-  submit = () => {};
+  submit = () => {
+    this.props.setCurrentPage("")
+  };
 
   render() {
     return (
@@ -85,7 +140,7 @@ export default class Profile extends Component {
                     <h4 className="card-title">UPLOAD DOCUMENTS</h4>
                   </div>
                   <div className="card-body">
-                    <form onSubmit={this.submit}>
+                    <form >
                       <table className="table">
                         <tbody>
                           <tr>
@@ -98,7 +153,7 @@ export default class Profile extends Component {
                                 <div className="form-group rounded">
                                   <input
                                     type="file"
-                                    name="underTrans"
+                                    name="undergradTranscript"
                                     onChange={this.upload}
                                     fileInput={this.state.underTrans}
                                   />
@@ -158,18 +213,11 @@ export default class Profile extends Component {
                             <td>
                               <form>
                                 <div className="form-group rounded">
-                                  <p
-                                    id="AlesChooseWarning"
-                                    style={{ color: "red" }}
-                                  ></p>
-                                  <p
-                                    id="alesInputWarning"
-                                    style={{ color: "red" }}
-                                  ></p>
+                                
                                   <input
                                     id="alesInput"
                                     type="file"
-                                    name="AlesResult"
+                                    name="alesResult"
                                     onChange={this.upload}
                                   />
                                 </div>
@@ -228,36 +276,7 @@ export default class Profile extends Component {
                             </td>
                           </tr>
 
-                          <tr>
-                            <td>
-                              <p>Working Experience Document</p>
-                            </td>
-
-                            <td>
-                              <form>
-                                <div className="form-group rounded">
-                                  <p
-                                    id="AlesChooseWarning3"
-                                    style={{ color: "red" }}
-                                  ></p>
-                                  <p
-                                    id="AlesChooseWarning4"
-                                    style={{ color: "red" }}
-                                  ></p>
-                                  <p
-                                    id="ExperienceWarning"
-                                    style={{ color: "red" }}
-                                  ></p>
-                                  <input
-                                    type="file"
-                                    onChange={this.upload}
-                                    name="experience"
-                                    id="experienceInput"
-                                  />
-                                </div>
-                              </form>
-                            </td>
-                          </tr>
+                          
 
                           <tr>
                             <td>
@@ -289,19 +308,12 @@ export default class Profile extends Component {
                                   <input
                                     type="file"
                                     onChange={this.upload}
-                                    name="referenceLetter"
+                                    name="referenceLetters"
                                     id="file-upload"
                                   />
                                 </div>
 
-                                <div className="form-group rounded">
-                                  <input
-                                    type="file"
-                                    onChange={this.upload}
-                                    name="referenceLetter2"
-                                    id="file-upload"
-                                  />
-                                </div>
+                      
                               </form>
                             </td>
                           </tr>
@@ -372,11 +384,12 @@ export default class Profile extends Component {
 
                             <td>
                               <form>
+                              <p>Only needed if you are foreign</p>
                                 <div className="form-group rounded">
                                   <input
                                     type="file"
                                     onChange={this.upload}
-                                    name="passport"
+                                    name="passportCopy"
                                     id="file-upload"
                                   />
                                 </div>
@@ -420,13 +433,15 @@ export default class Profile extends Component {
                               </div>
                             </td>
                           </tr>
+                          
                           <tr>
                             <td>
                               <p>Permission Letter</p>
                             </td>
-
+                           
                             <td>
                               <form>
+                              <p>Only needed if you are working</p>
                                 <div className="form-group rounded">
                                   <input
                                     type="file"
@@ -442,58 +457,7 @@ export default class Profile extends Component {
                       </table>
                       <table className="table">
                         <tbody className="add-remove">
-                          <tr className="masters-transcript-after">
-                            <td className="col-md-8">
-                              <p>Which degree to apply ?</p>
-                            </td>
-
-                            <td>
-                              <div className="form-check form-check-inline">
-                                <input
-                                  className="form-check-input"
-                                  name="radioOptions4"
-                                  type="radio"
-                                  id="radio7"
-                                  value="PhD"
-                                />{" "}
-                                PhD
-                                <label
-                                  className="form-check-label"
-                                  for="radio7"
-                                ></label>
-                              </div>
-
-                              <div className="form-check form-check-inline">
-                                <input
-                                  className="form-check-input"
-                                  name="radioOptions4"
-                                  type="radio"
-                                  id="radio8"
-                                  value="Master"
-                                />{" "}
-                                Master
-                                <label
-                                  className="form-check-label"
-                                  for="radio8"
-                                ></label>
-                              </div>
-
-                              <div className="form-check form-check-inline">
-                                <input
-                                  className="form-check-input"
-                                  name="radioOptions4"
-                                  type="radio"
-                                  id="radio9"
-                                  value="PhD Without Master Degree"
-                                />
-                                PhD Without Master Degree
-                                <label
-                                  className="form-check-label"
-                                  for="radio9"
-                                ></label>
-                              </div>
-                            </td>
-                          </tr>
+                          
                           <tr>
                             <td>
                               <p>Masters Transcript</p>
@@ -501,11 +465,12 @@ export default class Profile extends Component {
 
                             <td>
                               <form>
+                              <p>Only needed if you are applying to a PhD program</p>
                                 <div className="form-group rounded">
                                   <input
                                     type="file"
                                     onChange={this.upload}
-                                    name="mastersTranscript"
+                                    name="masterTranscript"
                                     id="file-upload"
                                   />
                                 </div>
@@ -524,8 +489,8 @@ export default class Profile extends Component {
                   
 
                     <button
-                      type="submit"
                       class="btn btn-info btn-fill pull-right"
+                      onClick={()=>this.submit}
                     >
                       Submit
                     </button>
@@ -585,7 +550,7 @@ export default class Profile extends Component {
                       <i className="fa fa-twitter"></i>
                     </button>
                     <button
-                      href="#"
+                      
                       className="btn btn-simple btn-link btn-icon"
                     >
                       <i className="fa fa-google-plus-square"></i>

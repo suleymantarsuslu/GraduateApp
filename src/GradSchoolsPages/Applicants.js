@@ -6,11 +6,11 @@ export default class Applicants extends Component {
   state = {
     applicants: [
       {
-        name: "Faruk Karadas",
-        username: "faruk",
-        email: "faruk@faruk.com",
-        contact: "+905350809590",
-        password: "123",
+        name: "",
+        username: "",
+        email: "",
+        contact: "",
+        password: "",
       },
     ],
 
@@ -22,27 +22,14 @@ export default class Applicants extends Component {
   };
 
 
-  ApplicantsInformaionsHandler = async () => {
-    await axios({
-      url: "http://commerchant.herokuapp.com/applications/all",
-      method: "GET",
-      headers: {
-        Authorization : this.props.token
-        },
-    })
-        .then((response) =>(
-        this.setState({ applicationFiles: response.data.payload.applications })
-        )
-      )
-      .catch((err) => console.log(err));
-
-  };
-
+checkApplicant=(anApplicant)=>{
+  this.props.setCurrentApplicant(anApplicant.applicant)
+  this.props.setCurrentPage("Documents")
+}
 
 
   componentWillMount(){
     this.jwtHandler()
-    this.ApplicantsInformaionsHandler()
   }
 
 
@@ -52,14 +39,14 @@ export default class Applicants extends Component {
       method: "GET",
       headers: {
         Authorization : this.props.token
-        },
+       },
     })
         .then((response) =>(
         this.setState({ applicationFiles: response.data.payload.applications })
         )
       )
       .catch((err) => console.log(err));
-
+      console.log(this.state.applicationFiles)
   };
 
 
@@ -90,6 +77,26 @@ export default class Applicants extends Component {
                         </tr>
                       </thead>
                       <tbody>
+                      {this.state.applicationFiles.map((anApplication) => (
+                        
+                      <tr onClick={()=> this.checkApplicant(anApplication)}>
+                          <td>{anApplication.applicant.name} {anApplication.applicant.surname}</td>
+                          <td>
+                            <img
+                              src={require("../assets/img/confirmed.png")}
+                              alt=""
+                              width="50px"
+                              height="25px"
+                            />
+                          </td>
+                          <td>01.02.2020 08:55</td>
+                          <td></td>
+                          <td>Documents has been checked and confirmed.</td>
+                        </tr>
+
+
+
+                      ))}
                         <tr>
                           <td>John Doe</td>
                           <td>
@@ -118,92 +125,7 @@ export default class Applicants extends Component {
                           <td></td>
                           <td>Documents are missing.</td>
                         </tr>
-                        <tr>
-                          <td>Bessie Berry</td>
-                          <td>
-                            <img
-                              src={require("../assets/img/confirmed.png")}
-                              alt=""
-                              width="40%"
-                              height="28%"
-                            />
-                          </td>
-                          <td>04.04.2020 13:45</td>
-                          <td>
-                            <a href="documents.html" />
-                            <img
-                              src={require("../assets/img/confirmed.png")}
-                              alt=""
-                              width="50%"
-                              height="30%"
-                            />
-                          </td>
-                          <td>Documents are not been checked yet.</td>
-                        </tr>
-                        <tr>
-                          <td>Tony Stark</td>
-                          <td>
-                            <img
-                              src={require("../assets/img/confirmed.png")}
-                              alt=""
-                              width="40%"
-                              height="28%"
-                            />
-                          </td>
-                          <td>05.04.2020 15:30</td>
-                          <td>
-                            <a href="documents.html" />
-                            <img
-                              src={require("../assets/img/confirmed.png")}
-                              alt=""
-                              width="50%"
-                              height="30%"
-                            />
-                          </td>
-                          <td>Documents are not been checked yet.</td>
-                        </tr>
-                        <tr>
-                          <td>Merve Celik</td>
-                          <td>
-                            <img
-                              src={require("../assets/img/confirmed.png")}
-                              alt=""
-                              width="40%"
-                              height="28%"
-                            />
-                          </td>
-                          <td>02.02.2020 08:45</td>
-                          <td></td>
-                          <td>Documents has been checked and confirmed.</td>
-                        </tr>
-                        <tr>
-                          <td>Nick Herasimenka</td>
-                          <td>
-                            <img
-                              src={require("../assets/img/confirmed.png")}
-                              alt=""
-                              width="40%"
-                              height="28%"
-                            />
-                          </td>
-                          <td></td>
-                          <td></td>
-                          <td>Documents are missing!</td>
-                        </tr>
-                        <tr>
-                          <td>Valentin Salmon</td>
-                          <td>
-                            <img
-                              src={require("../assets/img/confirmed.png")}
-                              alt=""
-                              width="40%"
-                              height="28%"
-                            />
-                          </td>
-                          <td></td>
-                          <td></td>
-                          <td>Documents are not valid!</td>
-                        </tr>
+                        
                       </tbody>
                     </table>
                   </div>

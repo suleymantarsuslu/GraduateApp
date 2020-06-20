@@ -23,12 +23,12 @@ export default class Notification extends Component {
     })
       .then(
         (response) => (
-          this.setState({ nots: response.data.payload.notifications }),
+          this.setState({ nots: response.data.payload.notifications })|
           this.setState({
             title: response.data.payload.notifications[0].title,
-          }),
-          this.setState({ note: response.data.payload.notifications[0].note }),
-          this.setState({ from: response.data.payload.notifications[0].from }),
+          })|
+          this.setState({ note: response.data.payload.notifications[0].note })|
+          this.setState({ from: response.data.payload.notifications[0].from })|
           this.setState({ date: response.data.payload.notifications[0].date })
         )
       )
@@ -52,9 +52,8 @@ export default class Notification extends Component {
        },
     })
       .then((response) =>
-        this.setState({ nots: response.data.payload.notifications }),
-        this.forceUpdate(),
-        document.getElementById("deleted").innerHTML= "The document is deleted"
+        document.getElementById("deleted").innerHTML= "The document is deleted",
+        this.props.setCurrentPage(""),
       )
       .catch(() => console.log("Notifications are Couldn't be shown"));
   };

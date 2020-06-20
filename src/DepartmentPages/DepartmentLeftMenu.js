@@ -5,7 +5,7 @@ import "../assets/img/favicon.ico";
 import "../assets/css/bootstrap.min.css";
 import "../assets/css/light-bootstrap-dashboard.css?v=2.0.0 ";
 
-export default class ApplicantLeftMenu extends Component {
+export default class DepartmentLeftMenu extends Component {
 state={
   lastPage:"",
  
@@ -17,26 +17,30 @@ state={
 
   accountHandler=()=>{
     this.props.setCurrentPage("Profile")
-    
     this.setActive("account")
-   
   }
 
-  documentsHandler=()=>{
-    this.props.setCurrentPage("UploadDocuments")
-    
-    this.setActive("documents")
+  applicantsHandler=()=>{
+    this.props.setCurrentPage("Applicants")
+    this.setActive("applicants")
   }
+
+  interviewsHandler=()=>{
+    this.props.setCurrentPage("DepartmentInterview")
+    this.setActive("interviews")
+  }
+
+  programsHandler=()=>{
+    this.props.setCurrentPage("GradschoolPrograms")
+    this.setActive("gradschoolPrograms")
+  }
+
+ 
+
   notificationHandler=()=>{
-    this.props.setCurrentPage("Notification")
+    this.props.setCurrentPage("GradSchoolNotifications")
     
     this.setActive("notification")
-  }
-
-  interviewHandle=()=>{
-    this.props.setCurrentPage("ApplicantInterview")
-    
-    this.setActive("interview")
   }
 
 
@@ -65,6 +69,7 @@ state={
             <div className="logo">
               <a className="navbar-brand" >
                 <img
+                style={{cursor:"pointer"}}
                   src={require("../assets/img/iyte_logo-tur.png")}
                   alt=""
                   width="200"
@@ -72,39 +77,22 @@ state={
                   onClick={this.homeHandle}
                 />
               </a>
-              <a  onClick={this.homeHandle}  className="simple-text">
+              <a  onClick={this.homeHandle} style={{cursor:"pointer"}} className="simple-text">
                 IZTECH Graduate Addmissions
               </a>
             </div>
             <ul className="nav">
-              <li id="account"  onClick={this.accountHandler}>
-                <a className="nav-link" >
-                  <i className="nc-icon nc-circle-09"></i>
-                  <p >Account</p>
-                </a>
-              </li>
-              <li id="interview" onClick={this.interviewHandle}>
-                <a className="nav-link" >
+     
+              <li id="interviews"  onClick={this.interviewsHandler}>
+                <a className="nav-link">
                   <i className="nc-icon nc-badge"></i>
-                  <p>Interview</p>
-                </a>
-              </li>
-              <li id="documents" onClick={this.documentsHandler}>
-                <a className="nav-link" >
-                  <i className="nc-icon nc-bullet-list-67"></i>
-                  <p>Documents</p>
+                  <p>Interviews</p>
                 </a>
               </li>
               <li id="notification" onClick={this.notificationHandler}>
                 <a  className="nav-link" >
                   <i className="nc-icon nc-bell-55"></i>
                   <p>Notifications</p>
-                </a>
-              </li>
-              <li className="nav-item active active-pro">
-                <a className="nav-link active" href="upgrade.html">
-                  <i className="nc-icon nc-paper-2"></i>
-                  <p>Application File</p>
                 </a>
               </li>
             </ul>

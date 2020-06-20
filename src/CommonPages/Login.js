@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Button, Form, FormGroup, Label, Input } from "reactstrap";
+import { Label, Input } from "reactstrap";
 import axios from "axios";
 
 export default class Login extends Component {
@@ -31,9 +31,10 @@ export default class Login extends Component {
   }
 
   handleError=(err)=>{
-    document.getElementById("loginEmptyField").innerHTML=err
+    document.getElementById("loginEmptyField").innerHTML="Wrong Email or Password"
   }
 
+  
 
   getProfile= async ()=>{
     await axios({
