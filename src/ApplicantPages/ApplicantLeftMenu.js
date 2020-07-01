@@ -118,19 +118,7 @@ state={
           </div>
         </div>
         
-      // <div>
-      //   <h3>{this.props.info.title}</h3>
-      //   <ListGroup>
-      //     {this.props.menuElements.map((category) => (
-      //       <ListGroupItem
-      //         onClick={() => this.props.changeCategory(category)}
-      //         key={category.CategoryName}
-      //       >
-      //         {category.CategoryName}
-      //       </ListGroupItem>
-      //     ))}
-      //   </ListGroup>
-      // </div>
+  
     );
   }
 }
