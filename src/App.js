@@ -25,7 +25,12 @@ import SendNotification from "./DepartmentPages/SendNotification";
 import DepartmentInterview from "./DepartmentPages/DepartmentInterview";
 import CreateInterview from "./DepartmentPages/CreateInterview";
 import ApplicantInterview from "./ApplicantPages/ApplicantInterview";
+import EditInterview from "./DepartmentPages/EditInterview";
+import ChangePassword from "./ApplicantPages/ChangePassword";
 
+import RoadMap from "./CommonPages/RoadMap";
+import GradeInterview from "./DepartmentPages/GradeInterview";
+import ApplicantProgress from "./ApplicantPages/ApplicantProgress";
 
 export default class App extends React.Component {
   state = {
@@ -35,6 +40,7 @@ export default class App extends React.Component {
     program: "",
     token: "",
     currentApplicant: "",
+    currentInterview:"",
     profile: {
       role: "",
       _id: "",
@@ -74,6 +80,11 @@ export default class App extends React.Component {
 
   setCurrentApplicant = (anAplicant) => {
     this.setState({ currentApplicant: anAplicant });
+  };
+
+
+  setCurrentInterview = (anInterview) => {
+    this.setState({ currentInterview: anInterview });
   };
 
   setCurrentPage = (value) => {
@@ -121,6 +132,7 @@ export default class App extends React.Component {
             setLogin={this.setLogin}
           />
         );
+
       case "applicant":
         return (
           <ApplicantMenu
@@ -161,8 +173,12 @@ export default class App extends React.Component {
         return <Dashboard />;
       case "Register":
         return <Register />;
+        case "RoadMap":
+          return (
+            <RoadMap/>
+          );
       case "Profile":
-        return <Profile token={this.state.token} />;
+        return <Profile token={this.state.token}  setCurrentPage={this.setCurrentPage}/>;
       case "Programs":
         return <Programs />;
       case "UploadDocuments":
@@ -181,6 +197,7 @@ export default class App extends React.Component {
             token={this.state.token}
           />
         );
+       
       case "Notification":
         return <Notification token={this.state.token} setCurrentPage={this.setCurrentPage}/>;
       case "SendNotification":
@@ -200,6 +217,7 @@ export default class App extends React.Component {
       case "Applicants":
         return (
           <Applicants
+          setApplicationFile={this.setApplicationFile}
             token={this.state.token}
             setCurrentApplicant={this.setCurrentApplicant}
             setCurrentPage={this.setCurrentPage}
@@ -211,6 +229,7 @@ export default class App extends React.Component {
       case "Documents":
         return (
           <Documents
+          applicationFile={this.state.applicationFile}
             token={this.state.token}
             currentApplicant={this.state.currentApplicant}
           />
@@ -227,6 +246,7 @@ export default class App extends React.Component {
               token={this.state.token}
               setCurrentApplicant={this.setCurrentApplicant}
               setCurrentPage={this.setCurrentPage}
+              setCurrentInterview = {this.setCurrentInterview}
             />
           );
           case "CreateInterview":
@@ -238,6 +258,27 @@ export default class App extends React.Component {
                 currentApplicant={this.state.currentApplicant}
               />
             );
+
+            case "ChangePassword":
+              return (
+                <ChangePassword
+                  token={this.state.token}
+                  setCurrentApplicant={this.setCurrentApplicant}
+                  setCurrentPage={this.setCurrentPage}
+                  currentApplicant={this.state.currentApplicant}
+                />
+              );
+
+            case "EditInterview":
+              return (
+                <EditInterview
+                  token={this.state.token}
+                  setCurrentApplicant={this.setCurrentApplicant}
+                  setCurrentPage={this.setCurrentPage}
+                  currentApplicant={this.state.currentApplicant}
+                  currentInterview={this.state.currentInterview}
+                />
+              );
             case "ApplicantInterview":
             return (
               <ApplicantInterview
@@ -245,7 +286,25 @@ export default class App extends React.Component {
                 setCurrentApplicant={this.setCurrentApplicant}
                 setCurrentPage={this.setCurrentPage}
                 currentApplicant={this.state.currentApplicant}
-              />
+              />);
+              case "GradeInterview":
+                return (
+                  <GradeInterview
+                    token={this.state.token}
+                    setCurrentApplicant={this.setCurrentApplicant}
+                    setCurrentPage={this.setCurrentPage}
+                    currentApplicant={this.state.currentApplicant}
+                    currentInterview={this.state.currentInterview}
+                  />);
+                  case "ApplicantProgress":
+                return (
+                  <ApplicantProgress
+                    token={this.state.token}
+                    setCurrentApplicant={this.setCurrentApplicant}
+                    setCurrentPage={this.setCurrentPage}
+                    currentApplicant={this.state.currentApplicant}
+                    currentInterview={this.state.currentInterview}
+                  />
             );
         
         
@@ -285,9 +344,9 @@ export default class App extends React.Component {
   render() {
     var page = this.openPage();
     return (
-      <Root page={page} />
-      // <Applicant token={this.state.token} Program={this.state.program}/>
-      // <Documents/>
+       <Root page={page} />
+        // <ApplicantProgress/>
+  
   
     );
   }

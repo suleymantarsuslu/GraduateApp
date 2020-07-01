@@ -63,39 +63,10 @@ export default class GradSchoolNotifications extends Component {
       .then((response) =>
         this.setState({ nots: response.data.payload.notifications }),
         this.props.setCurrentPage(""),
-        document.getElementById("deleted").innerHTML= "The document is deleted"
       )
       .catch(() => console.log("Notifications are Couldn't be shown"));
   };
 
-  showSelectedNote = () => {
-    try {
-      return (
-        <div className="col-md-8">
-          <div className="card">
-            <div className="card-header">
-              <h4 className="card-title">{this.state.title}</h4>
-              <p className="card-category">From : {this.state.from}</p>
-            </div>
-            <div className="card-body">
-              <div className="typography-line">
-                <p>{this.state.note}</p>
-              </div>
-            </div>
-            <div className="card-body">
-              <div className="typography-line">
-                <p>{moment(this.state.date).format("dddd, MMM DD,  HH:mm ")}</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      );
-    } catch (e) {
-      if (e) {
-        return "";
-      }
-    }
-  };
 
   componentWillMount = async () => {
     await this.takeNotifications();
@@ -106,14 +77,14 @@ export default class GradSchoolNotifications extends Component {
   render() {
     return (
       <div className="wrapper">
-        <div class="content">
-          <div class="container-fluid">
+        <div className="content">
+          <div className="container-fluid">
           <p onClick={this.newNotificationHandler} style={{color:"blue", textAlign:"right", cursor:"pointer"}}>Send Notification</p>
            
-            <div class="row">
-              <div class="col-md-4">
-                <div class="card  card-tasks">
-                  <div class="card-header ">
+            <div className="row">
+              <div className="col-md-4">
+                <div className="card  card-tasks">
+                  <div className="card-header ">
                     <h4 className="card-title">Notifications</h4>
                    
                   </div>
@@ -124,7 +95,7 @@ export default class GradSchoolNotifications extends Component {
                           {this.state.nots.map((aNotification) => (
                             <tr
                               onClick={() => this.selectANot(aNotification)}
-                              key={aNotification.title}
+                              key={aNotification._id}
                               
                             >
                              
@@ -132,7 +103,7 @@ export default class GradSchoolNotifications extends Component {
                               <td className="td-actions text-right">
                                 <button
                                   type="button"
-                                  class="close"
+                                  className="close"
                                   data-original-title="Remove"
                                   onClick={() => this.deleteNot(aNotification)}
                                   aria-label="Close"
@@ -156,7 +127,24 @@ export default class GradSchoolNotifications extends Component {
                 </div>
               </div>
 
-              {this.showSelectedNote()}
+              <div className="col-md-8">
+          <div className="card">
+            <div className="card-header">
+              <h4 className="card-title">{this.state.title}</h4>
+              <p className="card-category">From : {this.state.from}</p>
+            </div>
+            <div className="card-body">
+              <div className="typography-line">
+                <p>{this.state.note}</p>
+              </div>
+            </div>
+            <div className="card-body">
+              <div className="typography-line">
+                <p>{moment(this.state.date).format("dddd, MMM DD,  HH:mm ")}</p>
+              </div>
+            </div>
+          </div>
+        </div>
               <p id="deleted"></p>
             </div>
           </div>

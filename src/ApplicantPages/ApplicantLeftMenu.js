@@ -22,6 +22,13 @@ state={
    
   }
 
+  progressHandler=()=>{
+    this.props.setCurrentPage("ApplicantProgress")
+    
+    this.setActive("account")
+   
+  }
+
   documentsHandler=()=>{
     this.props.setCurrentPage("UploadDocuments")
     
@@ -101,10 +108,10 @@ state={
                   <p>Notifications</p>
                 </a>
               </li>
-              <li className="nav-item active active-pro">
-                <a className="nav-link active" href="upgrade.html">
+              <li className="nav-item active active-pro" id="progress" onClick={this.progressHandler}>
+                <a className="nav-link active">
                   <i className="nc-icon nc-paper-2"></i>
-                  <p>Application File</p>
+                  <p>Application Progress</p>
                 </a>
               </li>
             </ul>

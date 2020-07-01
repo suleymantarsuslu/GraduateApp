@@ -1,18 +1,26 @@
 import React, { Component } from "react";
 import axios from "axios";
+import moment from "moment";
 
-export default class CreateInterview extends Component {
+export default class EditInterview extends Component {
   state = {
     applicant: "",
     date: "",
     location: "",
-    applicationFiles:[],
-    currentApplicationFile:null
+    editDate: false,
+
   };
 
-  componentWillMount(){
-this.getApplicants()
-  }
+
+  gradeInterviewHandler=()=>{
+    this.props.
+    setCurrentPage("GradeInterview")
+    }
+componentWillMount=()=>{
+    this.setState({date:this.props.currentInterview.date})
+    this.setState({location:this.props.currentInterview.location})
+}
+
   handleProgram = (event) => {
     const target = event.target;
     const name = target.name;
@@ -21,98 +29,61 @@ this.getApplicants()
     this.setState({
       [name]: value,
     });
-  };
 
-  getApplicants = async () => {
-    await axios({
-      url: "http://commerchant.herokuapp.com/applications/all",
-      method: "GET",
-      headers: {
-        Authorization: this.props.token,
-      },
-    })
-      .then((response) =>
-        this.setState({ applicationFiles: response.data.payload.applications })
-      )
-      .catch((err) => console.log(err));
-
-
-        this.state.applicationFiles.map((anApplication)=>{
-            if(anApplication.applicant._id === this.props.currentApplicant._id){
-                this.setState({currentApplicationFile: anApplication})
-            }
-
-        })
-
-
+    console.log(name + " : " + value)
 
   };
+
+  handleDate =()=>{
+      if(this.state.editDate){
+      document.getElementById("dateInput").hidden=true
+      this.setState({editDate:false})
+      }else{
+        document.getElementById("dateInput").hidden=false
+        this.setState({editDate:true})
+      }
+  }
 
   submit = async (event) => {
     event.preventDefault();
-    if (this.state.date === "" || this.state.location === "") {
-      document.getElementById("EmptySpaces").innerHTML =
-        "Please fill the empty fields and try again!";
-    } else {
-      const payload = {
-        applicant: this.props.currentApplicant._id,
-        date: this.state.date,
-        location: this.state.location,
-      };
-      console.log("gönderilen veri: ", payload);
-
-      await axios({
-        url: "http://commerchant.herokuapp.com/interviews",
-        method: "POST",
-        headers: {
-          // Authorization: window.localStorage.getItem("token"),
-          Authorization: this.props.token,
-        },
-        data: payload,
-      })
-        .then(
-          (response) =>
-            this.setState({ datas: response }) |
-            alert(response.data.message) |
-            this.sendNotification()
-        )
-        .catch((err) => console.log(err));
-    }
 
 
-
-    const data={
-      status: "interviewSetted",
-  }
-  
-  await axios({
-      url:
-        "http://commerchant.herokuapp.com/applications/" +
-        this.state.currentApplicationFile._id,
-      method: "PATCH",
-      data: data,
-      headers: {
-        Authorization: this.props.token,
-      },
-    })
-      .then(
-        (response) =>
-          console.log(response.data.message) |
-          this.setState({ status: this.state.currentStatus })
-      )
-      .catch((err) => alert(err.response.data.message));
-  
+  const payload = {
+    applicant: this.props.currentApplicant._id,
+    date: this.state.date,
+    location: this.state.location,
 
   };
 
-  
+await axios({
+url: "http://commerchant.herokuapp.com/interviews/"+ this.props.currentInterview._id,
+method: "PUT",
+headers: {
+  Authorization: this.props.token,
+},
+data: payload,
+})
+.then(
+  (response) => alert(response.data.message) | this.sendNotification()
+  )
+
+.catch((err) => alert(err.response.data.message));
+    
+  };
+
+ 
+
+
 
   sendNotification = async () => {
+     
+    
     const payload = {
       to: this.props.currentApplicant.email,
-      title: "Interview Has Been Set",
-      note: " Date: " + this.state.date + "\nLocation:" + this.state.location,
+      title: "Interview Has Been Updated",
+      note: " Date: " + this.state.date + "\nLocation:"+ this.state.location
     };
+    console.log("gönderilen veri: ", payload);
     await axios({
       url: "http://commerchant.herokuapp.com/notifications",
       method: "POST",
@@ -122,11 +93,13 @@ this.getApplicants()
       },
       data: payload,
     })
-      .then((response) => console.log(response.data.message))
+      .then(
+        (response) => ( console.log(response.data.message)
+        )
+      )
       .catch((err) => console.log(err));
   };
 
- 
 
 
 
@@ -135,11 +108,15 @@ this.getApplicants()
       <div>
         <div className="content">
           <div className="container-fluid">
+          <p onClick={this.gradeInterviewHandler} style={{color:"blue", textAlign:"right", cursor:"pointer"}}>Grade Interview</p>
             <div className="row">
               <div className="col-md-12">
                 <div className="card">
                   <div className="card-header">
-                    <h4 className="card-title">New Interview</h4>
+                    <h4 className="card-title">
+                      Edit Interview : {this.props.currentApplicant.name}{" "}
+                      {this.props.currentApplicant.surname}
+                    </h4>
                   </div>
                   <div className="card-body">
                     <form>
@@ -147,15 +124,25 @@ this.getApplicants()
                         <div className="col-md-10 pr-1">
                           <div className="form-group">
                             <label>Date</label>
+                            <br />
+                            {moment(this.props.currentInterview.date).format("dddd, MMM DD,  HH:mm ")} 
+                            <p
+                              onClick={this.handleDate}
+                              style={{ color: "blue", cursor: "pointer" }}
+                            >
+                              (Edit The Date)
+                            </p>
                             <input
+                              id="dateInput"
                               type="datetime-local"
                               required="required"
                               className="form-control"
                               name="date"
+                              hidden
+                              placeholder={moment(this.props.currentInterview.date).format("dddd, MMM DD,  HH:mm ")}
                               onChange={this.handleProgram}
                             />
-                            <br />
-                            <br />
+                    
                           </div>
                         </div>
                       </div>
@@ -165,9 +152,10 @@ this.getApplicants()
                             <label>Location</label>​
                             <textarea
                               id="txtArea"
-                              rows="12"
+                              rows="5"
                               cols="74"
                               name="location"
+                              placeholder={this.props.currentInterview.location}
                               onChange={this.handleProgram}
                             ></textarea>
                           </div>
@@ -190,7 +178,6 @@ this.getApplicants()
                 </div>
               </div>
             </div>
-  
           </div>
         </div>
       </div>

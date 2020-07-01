@@ -1,32 +1,54 @@
 import React, { Component } from "react";
 import { ListGroup, ListGroupItem } from "reactstrap";
 import axios from "axios";
+import moment from "moment";
 
 export default class Applicants extends Component {
   state = {
     applicants: [
       {
-        name: "Faruk Karadas",
-        username: "faruk",
-        email: "faruk@faruk.com",
-        contact: "+905350809590",
-        password: "123",
+        name: "",
+        username: "",
+        email: "",
+        contact: "",
+        password: "",
       },
     ],
 
     applicationFiles: [],
-
+    settedInterview: -1,
     interviews: [],
+    applicantsAndInterviews: [],
+    backgroundColors: {
+      created: "#F08080",
+      edited: "#F08080",
+      submited: "#F08080",
+      checked: "#F08080",
+      updateRequested: "#F08080",
+      updated: "#F08080",
+      confirmed: "#F7DC6F",
+      rejected: "#F08080",
+      assessed: "#6BC608",
+      accepted: "#6BC608",
+      announced: "#6BC608",
+      interviewSetted: "#F7DC6F",
+    },
   };
 
-  checkApplicant = (anApplicant) => {
-    this.props.setCurrentApplicant(anApplicant.applicant);
-    this.props.setCurrentPage("CreateInterview");
+  checkApplicant = (anApplicationandInterview) => {
+    this.props.setCurrentApplicant(anApplicationandInterview.applicant);
+    this.props.setCurrentInterview(anApplicationandInterview.interview);
+    if (anApplicationandInterview.interviewDate === "not setted") {
+      this.props.setCurrentPage("CreateInterview");
+    } else {
+      this.props.setCurrentPage("EditInterview");
+    }
   };
 
   componentWillMount = async () => {
-    await this.jwtHandler();
+    await this.interviewBringer();
     await this.takeInterviews();
+    await this.checkInterviews();
   };
 
   takeInterviews = async () => {
@@ -39,31 +61,59 @@ export default class Applicants extends Component {
     })
       .then(
         (response) =>
-          this.setState({ interviews: response.data.payload.interview }) |
+          this.setState({ interviews: response.data.payload.interviews }) |
           console.log(response)
       )
       .catch((err) => console.log(err));
+    console.log(this.state.interviews);
   };
 
-  checkInterviewDate = (anApplicant) => {
-    this.state.interviews.map((anInterview) => {
-      if (anInterview.applicant._id === anApplicant._id) {
-        return (anInterview.date
-        );
+  c;
+
+  checkInterviews = (anApplicant) => {
+    this.state.applicationFiles.map((anApplication) => {
+      this.setState({ settedInterview: -1 });
+      this.state.interviews.map((anInterview) => {
+        if (anInterview.applicant === anApplication.applicant._id) {
+          this.setState({ settedInterview: anInterview });
+        }
+      });
+      if (this.state.settedInterview === -1) {
+        const obj = {
+          grade: "",
+          status: anApplication.status,
+          applicant: anApplication.applicant,
+          interviewDate: "",
+          interviewLocation: "",
+          interview: "",
+        };
+        this.setState({
+          applicantsAndInterviews: [...this.state.applicantsAndInterviews, obj],
+        });
+      } else {
+        var grade = "";
+        if (anApplication.assessmentResult !== null) {
+          grade = anApplication.assessmentResult;
+        }
+        const obj = {
+          grade: grade,
+          status: anApplication.status,
+          applicant: anApplication.applicant,
+          interviewDate: moment(this.state.settedInterview.date).format(
+            "dddd, MMM DD,  HH:mm "
+          ),
+
+          interviewLocation: this.state.settedInterview.location,
+          interview: this.state.settedInterview,
+        };
+        this.setState({
+          applicantsAndInterviews: [...this.state.applicantsAndInterviews, obj],
+        });
       }
     });
   };
 
-  checkInterviewLocation = (anApplicant) => {
-    this.state.interviews.map((anInterview) => {
-      if (anInterview.applicant._id === anApplicant._id) {
-        return (anInterview.location
-        );
-      }
-    });
-  };
-
-  jwtHandler = async () => {
+  interviewBringer = async () => {
     await axios({
       url: "http://commerchant.herokuapp.com/applications/all",
       method: "GET",
@@ -74,8 +124,9 @@ export default class Applicants extends Component {
       .then((response) =>
         this.setState({ applicationFiles: response.data.payload.applications })
       )
-      .catch((err) => console.log(err));
-    console.log(this.state.applicationFiles);
+      .catch((err) => {
+        alert(err.response.data.message);
+      });
   };
 
   render() {
@@ -96,16 +147,36 @@ export default class Applicants extends Component {
                           <th>Applicant</th>
                           <th>Interview Date</th>
                           <th>Interview Location</th>
+                          <th>Interview Grade</th>
                         </tr>
                       </thead>
                       <tbody>
-                        {this.state.applicationFiles.map((anApplication) =>
-                          // this.checkInterview(anApplication.applicant)
-                          <tr onClick={() => this.checkApplicant(anApplication)}>
-                          <td>{anApplication.applicant.name}</td>
-                          <td>{this.checkInterviewDate(anApplication.applicant)}</td>
-                          <td>{this.checkInterviewLocation(anApplication.applicant)}</td>
-                        </tr>
+                        {this.state.applicantsAndInterviews.map(
+                          (anApplicationandInterview) => (
+                            <tr
+                              key={anApplicationandInterview.applicant._id}
+                              onClick={() =>
+                                this.checkApplicant(anApplicationandInterview)
+                              }
+                            >
+                              <td
+                                style={{
+                                  cursor: "pointer",
+                                  backgroundColor: this.state.backgroundColors[
+                                    anApplicationandInterview.status
+                                  ],
+                                }}
+                              >
+                                {anApplicationandInterview.applicant.name}{" "}
+                                {anApplicationandInterview.applicant.surname}
+                              </td>
+                              <td>{anApplicationandInterview.interviewDate}</td>
+                              <td>
+                                {anApplicationandInterview.interviewLocation}
+                              </td>
+                              <td>{anApplicationandInterview.grade}</td>
+                            </tr>
+                          )
                         )}
                       </tbody>
                     </table>

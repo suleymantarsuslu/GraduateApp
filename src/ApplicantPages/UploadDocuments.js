@@ -1,131 +1,260 @@
 import React, { Component } from "react";
 import axios from "axios";
 import image1 from "../assets/img/faces/face-0.jpg";
+import imageUpload from "../assets/img/indir.png";
+import imageUploadRed from "../assets/img/indirRed.png";
+
 import { relativeTimeThreshold } from "moment";
 
 export default class Profile extends Component {
   state = {
+    applicationFile: null,
     alesReq: null,
     sgk: null,
     experience: null,
+    photo: null,
     alesResult: null,
     englishExamResult: null,
-    referenceLetter: null,
-    referenceLetter2: null,
+    referenceLetters: null,
     statementOfPurpose: null,
-    ALESResultInput: null,
-    experinceInput: null,
-    passport: null,
-    passportInput: null,
+    passportCopy: null,
+    doesWork: null,
     permissionLetter: null,
-    permissionLetterInput: null,
-    mastersTranscriptInput: null,
     image: image1,
-    underTrans:null,
-    documents:null
-    
+    imageUpload: imageUpload,
+    imageUploadRed: imageUploadRed,
+    undergradTranscript: null,
+    masterTranscript: null,
+    documentsTitles: [
+      "photo",
+      "undergradTranscript",
+      "alesResult",
+      "englishExamResult",
+      "referenceLetters",
+      "statementOfPurpose",
+      "nationality",
+      "passportCopy",
+      "permissionLetter",
+      "masterTranscript",
+    ],
+    undergradTranscriptUpload: null,
+    alesResultUpload: null,
+    englishExamResultUpload: null,
+    referenceLettersUpload: null,
+    statementOfPurposeUpload: null,
+    passportCopyUpload: null,
+    permissionLetterUpload: null,
+    masterTranscriptUpload: null,
+    updated: false,
+    status:{created:"created", edited:"edited", submited:"submited", checked:"checked", updateRequested:"updateRequested", updated:"updated", confirmed:"confirmed", rejected:"rejected", assessed:"assessed", accepted:"accepted", announced:"accepted"},
+    currentStatus:"updated"
   };
 
-  getAccountId= async ()=>{
+  componentWillMount = async () => {
+    await this.getApplicationFile();
+    await this.documentHandler();
+    await this.uploadImage();
+  };
+
+  uploadImage = () => {
+    if (this.state.photo !== null) {
+      document.getElementById("photo").src = "http://commerchant.herokuapp.com/"+this.state.photo.source;
+    }
+
+    if (this.state.applicationFile.status === "created" || this.state.applicationFile.status === "updateRequested") {
+      this.setState({ alesResultUpload: this.state.imageUpload });
+      this.setState({ undergradTranscriptUpload: this.state.imageUpload });
+      this.setState({ englishExamResultUpload: this.state.imageUpload });
+      this.setState({ referenceLettersUpload: this.state.imageUpload });
+      this.setState({ statementOfPurposeUpload: this.state.imageUpload });
+      this.setState({ passportCopyUpload: this.state.imageUpload });
+      this.setState({ permissionLetterUpload: this.state.imageUpload });
+      this.setState({ masterTranscriptUpload: this.state.imageUpload });
+      this.setState({ englishExamResultUpload: this.state.imageUpload });
+      document.getElementById("englishExamResultInput").disabled = true;
+
+    } else {
+      this.setState({ alesResultUpload: this.state.imageUploadRed });
+      document.getElementById("alesResultInput").disabled = true;
+
+      document.getElementById("file-input").disabled = true;
+
+      this.setState({ undergradTranscriptUpload: this.state.imageUploadRed });
+      document.getElementById("undergradTranscriptInput").disabled = true;
+
+      this.setState({ englishExamResultUpload: this.state.imageUploadRed });
+      document.getElementById("englishExamResultInput").disabled = true;
+
+      this.setState({ referenceLettersUpload: this.state.imageUploadRed });
+      document.getElementById("referenceLettersInput").disabled = true;
+
+      this.setState({ statementOfPurposeUpload: this.state.imageUploadRed });
+      document.getElementById("statementOfPurposeInput").disabled = true;
+
+      this.setState({ passportCopyUpload: this.state.imageUploadRed });
+      document.getElementById("passportCopyInput").disabled = true;
+
+      this.setState({ permissionLetterUpload: this.state.imageUploadRed });
+      document.getElementById("permissionLetterInput").disabled = true;
+
+      this.setState({ masterTranscriptUpload: this.state.imageUploadRed });
+      document.getElementById("masterTranscriptInput").disabled = true;
+    }
+  };
+
+  getApplicationFile = async () => {
     await axios({
-      url: "http://commerchant.herokuapp.com/accounts/profile",
+      url: "http://commerchant.herokuapp.com/applications",
       method: "GET",
       headers: {
-        Authorization : this.props.token
-        },
-    })
-      .then((response) =>(
-       this.props.setApplicationFile( response.data.payload.application))
-
-      )
-      .catch(() => console.log("Profil gösterilemedi"));
-
-      
-
-}
-
-
-
-
-componentWillMount(){
-  this.jwtHandler()
-}
- 
-jwtHandler = async () => {
-  await axios({
-    url: "http://commerchant.herokuapp.com/accounts/profile",
-    method: "GET",
-    headers: {
-      // Authorization: window.localStorage.getItem("token"),
-      Authorization : this.props.token
+        Authorization: this.props.token,
       },
-  })
-    .then((response) =>
-      this.setState({ accountId: response.data.payload.account._id })
+    })
+      .then((response) =>
+        this.setState({ applicationFile: response.data.payload.application })
+      )
+      .catch((err) => alert(err.response.data.message));
 
-    )
-    .catch(() => console.log("Profil gösterilemedi"));
-    console.log("Account id is : ", this.state.accountId)
-    // this.documentHandler()
-};
+      this.state.documentsTitles.map((aTitle) => {
+        for (var aDocument in this.state.applicationFile) {
+          if (
+            Object.prototype.hasOwnProperty.call(
+              this.state.applicationFile,
+              aDocument
+            )
+          ) {
+            if (aDocument === aTitle) {
+              // this.setState({
+              //   [aTitle]: aDocument,
+                
+              // });
+              console.log(this.state.applicationFile[aDocument])
+              this.documentBringer(this.state.applicationFile[aDocument],aDocument)
+              
+            }
+          }
+        }
+      });
+  };
 
-
-
-
-
-
-  documentHandler = async () => {
+  documentBringer = async (aDocument, docName) => {
     await axios({
-      url: "http://commerchant.herokuapp.com/documents/all",
+      url: "http://commerchant.herokuapp.com/documents/" + aDocument,
       method: "GET",
       headers: {
-        Authorization : this.props.token
-       },
+        // Authorization: window.localStorage.getItem("token"),
+        Authorization: this.props.token,
+      },
     })
-        .then((response) =>(
-        this.setState({ documents: response.data.payload.documents.filter(aDocument => aDocument.originalname.includes(this.props.applicantId)) })
+      .then(
+        (response) => (
+          this.setState({ [docName]: response.data.payload.document }),
+
+      document.getElementById(docName).innerHTML = response.data.payload.document.originalname
         )
       )
       .catch((err) => console.log(err));
-      console.log("Documents are ",this.state.documents)
   };
 
-
-
-
-
-
-
-
+  documentHandler = async () => {
+    await axios({
+      url: "http://commerchant.herokuapp.com/documents",
+      method: "GET",
+      headers: {
+        Authorization: this.props.token,
+      },
+    })
+      .then((response) =>
+        this.setState({ documents: response.data.payload.documents })
+      )
+      .catch((err) => alert(err.response.data.message));
+  };
 
   upload = async (event) => {
     const target = event.target;
     const name = target.name;
+
     var fileInput = event.target.files[0];
     var fileName = event.target.files[0].name;
 
-    var myHeaders = new Headers();
-    myHeaders.append("Authorization", this.props.token);
-
     var formdata = new FormData();
     formdata.append("title", name);
-    formdata.append("document", fileInput,this.state.accountId);
+    formdata.append("document", fileInput, fileName);
 
-    var requestOptions = {
+    await axios({
+      url: "http://commerchant.herokuapp.com/documents",
       method: "POST",
-      headers: myHeaders,
-      body: formdata,
-      redirect: "follow",
-    };
+      headers: {
+        Authorization: this.props.token,
+      },
+      data: formdata,
+    })
+      .then(
+        (response) =>
+          this.updadeApplicationFile(name, response.data.payload.document._id) |
+          this.setState({ updated: true })
+      )
 
-    fetch("http://commerchant.herokuapp.com/documents", requestOptions)
-      .then((response) => response.text())
-      .then((result) => console.log(result))
-      .catch((error) => console.log("error", error));
+      .catch((err) => alert(err.response.data.message));
+        if(name!=="photo"){document.getElementById(name).innerHTML = fileName;}
+    
   };
 
-  submit = () => {
-    this.props.setCurrentPage("")
+  updadeApplicationFile = async (name, id) => {
+    const payload = {
+      [name]: id,
+    };
+
+    await axios({
+      url: "http://commerchant.herokuapp.com/applications/",
+      method: "PUT",
+      data: payload,
+      headers: {
+        Authorization: this.props.token,
+      },
+    })
+      .then((response) => console.log(response.data.message))
+
+      .catch((err) => alert(err.response.data.message));
+  };
+
+  updadeStatus = async () => {
+    const payload = {
+      "status": this.state.currentStatus,
+    };
+
+    console.log(payload)
+
+    await axios({
+      url: "http://commerchant.herokuapp.com/applications/",
+      method: "PATCH",
+      data: payload,
+      headers: {
+        Authorization: this.props.token,
+      },
+    })
+      .then((response) => alert(response.data.message))
+
+      .catch((err) => alert(err.response.data.message));
+  };
+
+
+  submit =  (event) => {
+    event.preventDefault();
+    console.log("this.state.applicationFile.status"+ this.state.applicationFile.status)
+    // if (this.state.updated) {
+      if (this.state.applicationFile.status === "created") {
+        this.setState({currentStatus: "submited"})
+      } else {
+        this.setState({currentStatus: "updated"})
+      
+      }
+      this.updadeStatus()
+      
+
+    // } else {
+    //   alert("There is no change to submit.");
+    // }
   };
 
   render() {
@@ -140,7 +269,7 @@ jwtHandler = async () => {
                     <h4 className="card-title">UPLOAD DOCUMENTS</h4>
                   </div>
                   <div className="card-body">
-                    <form >
+                    <form>
                       <table className="table">
                         <tbody>
                           <tr>
@@ -149,61 +278,31 @@ jwtHandler = async () => {
                             </td>
 
                             <td>
-                              <form>
-                                <div className="form-group rounded">
-                                  <input
-                                    type="file"
-                                    name="undergradTranscript"
-                                    onChange={this.upload}
-                                    fileInput={this.state.underTrans}
+                              <div className="form-group rounded">
+                                <label htmlFor="undergradTranscriptInput">
+                                  <img
+                                    style={{ cursor: "pointer" }}
+                                    className="avatar border-gray"
+                                    src={this.state.undergradTranscriptUpload}
+                                    alt="..."
                                   />
-                                </div>
-                              </form>
-                            </td>
-                          </tr>
-                        </tbody>
-                      </table>
-                      <table className="table">
-                        <tbody>
-                          <tr>
-                            <td className="col-md-8">
-                              <p> Are you applying with ALES requirements ?</p>
-                            </td>
+                                </label>
 
-                            <td>
-                              <div className="form-check form-check-inline">
                                 <input
-                                  className="form-check-input"
-                                  name="alesReq"
-                                  type="radio"
-                                  id="radio1"
-                                  onChange={this.ALESReqHandle}
-                                  value="Yes"
+                                  hidden
+                                  id="undergradTranscriptInput"
+                                  type="file"
+                                  name="undergradTranscript"
+                                  onChange={this.upload}
                                 />
-                                Yes
-                                <label
-                                  className="form-check-label"
-                                  for="radio1"
-                                ></label>
                               </div>
 
-                              <div className="form-check form-check-inline">
-                                <input
-                                  className="form-check-input"
-                                  name="alesReq"
-                                  onChange={this.ALESReqHandle}
-                                  type="radio"
-                                  id="radio2"
-                                  value="No"
-                                />
-                                No
-                                <label
-                                  className="form-check-label"
-                                  for="radio2"
-                                ></label>
-                              </div>
+                              <p id="undergradTranscript"></p>
                             </td>
                           </tr>
+
+                          
+                          
 
                           <tr id="ALES">
                             <td>
@@ -211,72 +310,30 @@ jwtHandler = async () => {
                             </td>
 
                             <td>
-                              <form>
-                                <div className="form-group rounded">
-                                
-                                  <input
-                                    id="alesInput"
-                                    type="file"
-                                    name="alesResult"
-                                    onChange={this.upload}
+                              <div className="form-group rounded">
+                                <label htmlFor="alesResultInput">
+                                  <img
+                                    style={{ cursor: "pointer" }}
+                                    className="avatar border-gray"
+                                    src={this.state.alesResultUpload}
+                                    alt="..."
                                   />
-                                </div>
-                              </form>
+                                </label>
+
+                                <input
+                                  hidden
+                                  id="alesResultInput"
+                                  type="file"
+                                  name="alesResult"
+                                  onChange={this.upload}
+                                />
+                              </div>
+
+                              <p id="alesResult" align="left"></p>
                             </td>
                           </tr>
 
-                          <tr id="experienced">
-                            <td>
-                              <p>
-                                Do you have at least 1250 days of working
-                                experience documented by the relevant government
-                                body (in Turkey, SGK)
-                              </p>
-                            </td>
-
-                            <td>
-                              <div className="form-check form-check-inline">
-                                <p
-                                  id="AlesChooseWarning2"
-                                  style={{ color: "red" }}
-                                ></p>
-                                <p
-                                  id="AlesRatioWarning"
-                                  style={{ color: "red" }}
-                                ></p>
-                                <input
-                                  className="form-check-input"
-                                  name="sgk"
-                                  onChange={this.experienceHandle}
-                                  type="radio"
-                                  id="AlesRatio1"
-                                  value="Yes"
-                                />
-                                Yes
-                                <label
-                                  className="form-check-label"
-                                  for="radio1"
-                                ></label>
-                              </div>
-                              <div className="form-check form-check-inline">
-                                <input
-                                  className="form-check-input"
-                                  name="sgk"
-                                  onChange={this.experienceHandle}
-                                  type="radio"
-                                  id="AlesRatio2"
-                                  value="No"
-                                />
-                                No
-                                <label
-                                  className="form-check-label"
-                                  for="radio2"
-                                ></label>
-                              </div>
-                            </td>
-                          </tr>
-
-                          
+                        
 
                           <tr>
                             <td>
@@ -284,16 +341,26 @@ jwtHandler = async () => {
                             </td>
 
                             <td>
-                              <form>
-                                <div className="form-group rounded">
-                                  <input
-                                    type="file"
-                                    onChange={this.upload}
-                                    name="englishExamResult"
-                                    id="file-upload"
+                              <div className="form-group rounded">
+                                <label htmlFor="englishExamResultInput">
+                                  <img
+                                    style={{ cursor: "pointer" }}
+                                    className="avatar border-gray"
+                                    src={this.state.englishExamResultUpload}
+                                    alt="..."
                                   />
-                                </div>
-                              </form>
+                                </label>
+
+                                <input
+                                  hidden
+                                  id="englishExamResultInput"
+                                  type="file"
+                                  name="englishExamResult"
+                                  onChange={this.upload}
+                                />
+                              </div>
+
+                              <p id="englishExamResult"></p>
                             </td>
                           </tr>
 
@@ -303,18 +370,26 @@ jwtHandler = async () => {
                             </td>
 
                             <td>
-                              <form>
-                                <div className="form-group rounded">
-                                  <input
-                                    type="file"
-                                    onChange={this.upload}
-                                    name="referenceLetters"
-                                    id="file-upload"
+                              <div className="form-group rounded">
+                                <label htmlFor="referenceLettersInput">
+                                  <img
+                                    style={{ cursor: "pointer" }}
+                                    className="avatar border-gray"
+                                    src={this.state.referenceLettersUpload}
+                                    alt="..."
                                   />
-                                </div>
+                                </label>
 
-                      
-                              </form>
+                                <input
+                                  hidden
+                                  id="referenceLettersInput"
+                                  type="file"
+                                  name="referenceLetters"
+                                  onChange={this.upload}
+                                />
+                              </div>
+
+                              <p id="referenceLetters"></p>
                             </td>
                           </tr>
 
@@ -324,113 +399,57 @@ jwtHandler = async () => {
                             </td>
 
                             <td>
-                              <form>
-                                <div className="form-group rounded">
-                                  <input
-                                    type="file"
-                                    onChange={this.upload}
-                                    name="statementOfPurpose"
-                                    id="file-upload"
+                              <div className="form-group rounded">
+                                <label htmlFor="statementOfPurposeInput">
+                                  <img
+                                    style={{ cursor: "pointer" }}
+                                    className="avatar border-gray"
+                                    src={this.state.statementOfPurposeUpload}
+                                    alt="..."
                                   />
-                                </div>
-                              </form>
-                            </td>
-                          </tr>
-                        </tbody>
-                      </table>
-                      <table className="table">
-                        <tbody className="add-remove">
-                          <tr className="passport-after">
-                            <td className="col-md-8">
-                              <p>Nationality</p>
-                            </td>
+                                </label>
 
-                            <td>
-                              <div className="form-check form-check-inline">
                                 <input
-                                  className="form-check-input"
-                                  name="radioOptions3"
-                                  type="radio"
-                                  id="radio3"
-                                  value="Turkish"
-                                />{" "}
-                                Turkish
-                                <label
-                                  className="form-check-label"
-                                  for="radio3"
-                                ></label>
+                                  hidden
+                                  id="statementOfPurposeInput"
+                                  type="file"
+                                  name="statementOfPurpose"
+                                  onChange={this.upload}
+                                />
                               </div>
 
-                              <div className="form-check form-check-inline">
-                                <input
-                                  className="form-check-input"
-                                  name="radioOptions3"
-                                  type="radio"
-                                  id="radio4"
-                                  value="Other"
-                                />{" "}
-                                Other
-                                <label
-                                  className="form-check-label"
-                                  for="radio4"
-                                ></label>
-                              </div>
+                              <p id="statementOfPurpose"></p>
                             </td>
                           </tr>
+                          
                           <tr>
                             <td>
                               <p>Passport</p>
                             </td>
 
                             <td>
-                              <form>
-                              <p>Only needed if you are foreign</p>
-                                <div className="form-group rounded">
-                                  <input
-                                    type="file"
-                                    onChange={this.upload}
-                                    name="passportCopy"
-                                    id="file-upload"
+                            <h7>Needed only if you are foreign!</h7>
+                              <div className="form-group rounded">
+                                
+                                <label htmlFor="passportCopyInput">
+                                  <img
+                                    style={{ cursor: "pointer" }}
+                                    className="avatar border-gray"
+                                    src={this.state.passportCopyUpload}
+                                    alt="..."
                                   />
-                                </div>
-                              </form>
-                            </td>
-                          </tr>
-                          <tr>
-                            <td>
-                              <p>Are you working</p>
-                            </td>
+                                </label>
 
-                            <td>
-                              <div className="form-check form-check-inline">
                                 <input
-                                  className="form-check-input"
-                                  name="radioOptions1"
-                                  type="radio"
-                                  id="radio5"
-                                  value="Yes"
-                                />{" "}
-                                Yes
-                                <label
-                                  className="form-check-label"
-                                  for="radio5"
-                                ></label>
+                                  hidden
+                                  id="passportCopyInput"
+                                  type="file"
+                                  name="passportCopy"
+                                  onChange={this.upload}
+                                />
                               </div>
 
-                              <div className="form-check form-check-inline">
-                                <input
-                                  className="form-check-input"
-                                  name="radioOptions1"
-                                  type="radio"
-                                  id="radio6"
-                                  value="No"
-                                />{" "}
-                                No
-                                <label
-                                  className="form-check-label"
-                                  for="radio6"
-                                ></label>
-                              </div>
+                              <p id="passportCopy"></p>
                             </td>
                           </tr>
                           
@@ -438,62 +457,67 @@ jwtHandler = async () => {
                             <td>
                               <p>Permission Letter</p>
                             </td>
-                           
+
                             <td>
-                              <form>
-                              <p>Only needed if you are working</p>
-                                <div className="form-group rounded">
-                                  <input
-                                    type="file"
-                                    onChange={this.upload}
-                                    name="permissionLetter"
-                                    id="file-upload"
+                              <div className="form-group rounded">
+                                <label htmlFor="permissionLetterInput">
+                                  <img
+                                    style={{ cursor: "pointer" }}
+                                    className="avatar border-gray"
+                                    src={this.state.permissionLetterUpload}
+                                    alt="..."
                                   />
-                                </div>
-                              </form>
+                                </label>
+
+                                <input
+                                  hidden
+                                  id="permissionLetterInput"
+                                  type="file"
+                                  name="permissionLetter"
+                                  onChange={this.upload}
+                                />
+                              </div>
+
+                              <p id="permissionLetter"></p>
                             </td>
                           </tr>
-                        </tbody>
-                      </table>
-                      <table className="table">
-                        <tbody className="add-remove">
-                          
+
+                  
                           <tr>
                             <td>
                               <p>Masters Transcript</p>
                             </td>
 
                             <td>
-                              <form>
-                              <p>Only needed if you are applying to a PhD program</p>
-                                <div className="form-group rounded">
-                                  <input
-                                    type="file"
-                                    onChange={this.upload}
-                                    name="masterTranscript"
-                                    id="file-upload"
+                              <div className="form-group rounded">
+                                <label htmlFor="masterTranscriptInput">
+                                  <img
+                                    style={{ cursor: "pointer" }}
+                                    className="avatar border-gray"
+                                    src={this.state.masterTranscriptUpload}
+                                    alt="..."
                                   />
-                                </div>
-                              </form>
+                                </label>
+
+                                <input
+                                  hidden
+                                  id="masterTranscriptInput"
+                                  type="file"
+                                  name="masterTranscript"
+                                  onChange={this.upload}
+                                />
+                              </div>
+
+                              <p id="masterTranscript"></p>
                             </td>
                           </tr>
                         </tbody>
-
-                        <div class="card-footer">
-                          <div class="row float-right"></div>
-                        </div>
                       </table>
 
                       <div className="clearfix"></div>
                     </form>
-                  
 
-                    <button
-                      class="btn btn-info btn-fill pull-right"
-                      onClick={()=>this.submit}
-                    >
-                      Submit
-                    </button>
+                    <button type="submit" className="btn btn-info btn-fill pull-right" value="Submit" onClick={this.submit}>Submit</button>	
                   </div>
                 </div>
               </div>
@@ -509,17 +533,20 @@ jwtHandler = async () => {
                   </div>
                   <div className="card-body">
                     <div className="author">
-                      <div class="image-upload"   >
-                        <label for="file-input">
-
+                      <div className="image-upload">
+                        <label htmlFor="file-input">
                           <img
-                         style={{ cursor: "pointer"}}
+                            id="photo"
+                            style={{ cursor: "pointer" }}
                             className="avatar border-gray"
                             src={this.state.image}
                             alt="..."
                           />
                           <a>
-                            <p className="description text-center"  style={{ cursor: "pointer"}}>
+                            <p
+                              className="description text-center"
+                              style={{ cursor: "pointer", color: "blue" }}
+                            >
                               Upload a Photo
                             </p>
                           </a>
@@ -534,27 +561,8 @@ jwtHandler = async () => {
                         />
                       </div>
                     </div>
-                  </div>
+                 
                   <hr />
-                  <div className="button-container mr-auto ml-auto">
-                    <button
-                      href="#"
-                      className="btn btn-simple btn-link btn-icon"
-                    >
-                      <i className="fa fa-facebook-square"></i>
-                    </button>
-                    <button
-                      href="#"
-                      className="btn btn-simple btn-link btn-icon"
-                    >
-                      <i className="fa fa-twitter"></i>
-                    </button>
-                    <button
-                      
-                      className="btn btn-simple btn-link btn-icon"
-                    >
-                      <i className="fa fa-google-plus-square"></i>
-                    </button>
                   </div>
                 </div>
               </div>

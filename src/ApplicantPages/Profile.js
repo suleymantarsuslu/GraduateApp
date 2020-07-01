@@ -2,9 +2,12 @@ import React, { Component } from "react";
 import axios from "axios";
 
 import { Button, Form, FormGroup, Label, Input, FormText } from "reactstrap";
+import ChangePassword from "./ChangePassword";
 export default class Profile extends Component {
   state = {
     myProfile: { },
+    applicationFile:null,
+    program:null
   };
 
   handlechange = (event) => {
@@ -23,48 +26,58 @@ export default class Profile extends Component {
       name: this.state.name,
       middlename: this.state.middlename,
       surname: this.state.surname,
-      email: this.state.email,
       phone: this.state.phone,
       address: this.state.address,
 
     };
     await axios({
-      url: "http://commerchant.herokuapp.com/accounts/register",
-      method: "POST",
+      url: "http://commerchant.herokuapp.com/accounts/profile",
+      method: "PATCH",
       data: payload,
+      headers: {
+          Authorization : this.props.token
+           },
     })
       .then(
         (response) => (
           this.setState({ datas: response }), alert(response.data.message)
         )
       )
-      .catch(() => console.log("Register Başarısız"));
+      .catch((err) => {alert(err.response.data.message)});
   };
 
 
   handlePasswordChange=()=>{
-        if(this.state.newPassword === this.state.myProfile.password){
-
-        }
+    this.props.setCurrentPage("ChangePassword")
 }
 
 
   componentWillMount= async()=>{
-    await this.jwtHandler()
-    this.setState({
-    name: this.state.name,
-      surname: this.state.surname,
-      email: this.state.email,
-      
-      phone: this.state.phone,
-      address: this.state.address,
-
-    })
+    await this.getProfile()
+    // await this.getApplicationFile()
   }
 
+  // getApplicationFile = async () => {
+  //   await axios({
+  //     url: "http://commerchant.herokuapp.com/applications",
+  //     method: "GET",
+  //     headers: {
+  //       Authorization : this.props.token
+  //      },
+  //   })
+  //       .then((response) =>(
+  //       this.setState({ applicationFile: response.data.payload.application })
+  //       )
+  //     )
+  //     .catch((err) => console.log(err));
+  //     console.log(this.state.applicationFile)
+  // };
+
+
+ 
   
 
-  jwtHandler = async () => {
+  getProfile = async () => {
     await axios({
       url: "http://commerchant.herokuapp.com/accounts/profile",
       method: "GET",
@@ -78,7 +91,7 @@ export default class Profile extends Component {
 
       )
       .catch(() => console.log("Profil gösterilemedi"));
-      console.log(this.state.myProfile)
+     
   };
 
   render() {
@@ -99,6 +112,7 @@ export default class Profile extends Component {
                           <div className="form-group">
                             <label>First Name</label>
                             <input
+                            disabled="disabled" 
                               type="text"
                               className="form-control"
                               placeholder={this.state.myProfile.name}
@@ -114,6 +128,7 @@ export default class Profile extends Component {
                               Last Name
                             </label>
                             <input
+                            disabled="disabled" 
                               type="text"
                               className="form-control"
                               placeholder={this.state.myProfile.surname}
@@ -124,7 +139,7 @@ export default class Profile extends Component {
                         </div>
                       </div>
                       <div className="row">
-                        <div className="col-md-6 pr-1">
+                        <div className="col-md-6 ">
                           <div className="form-group">
                             <label>Email</label>
                             <input
@@ -137,28 +152,14 @@ export default class Profile extends Component {
                             />
                           </div>
                         </div>
-                        <div className="col-md-6 pl-1">
-                          <div className="form-group">
-                            <label>Program Applied</label>
-                            <input
-                              type="text"
-                              disabled="disabled" 
-                              className="form-control"
-                              placeholder="Program"
-                              name="programApplied"
-                              onChange={this.handlechange}
-                            />
-                          </div>
-                        </div>
-                      </div>
-                      <div className="row">
-                  <div className="col-md-6 pl-1">
+                      
+                    
+                  <div className="col-md-6 " >
                     <div className="form-group">
                       <Label for="email">Phone</Label>
                       <Input
                         type="text"
                         name="phone"
-                        value={this.state.phone}
                         placeholder={this.state.myProfile.phone}
                         onChange={this.handlechange}
                       />
@@ -180,9 +181,9 @@ export default class Profile extends Component {
                           </div>
                         </div>
                       </div>
-                 
+                      <p/>
 
-                    
+                      <p onClick={this.handlePasswordChange} style={{color:"blue", cursor:"pointer"}}>Change Password</p>
                       <p/>
                       <button
                         type="submit"
@@ -221,7 +222,7 @@ export default class Profile extends Component {
                       <p className="description">{this.state.myProfile.email}</p>
                     </div>
                     <p className="description text-center">
-                      PROGRAM
+                      
                     </p>
                   </div>
                   <hr />

@@ -30,11 +30,8 @@ export default class Login extends Component {
 
   }
 
-  handleError=(err)=>{
-    document.getElementById("loginEmptyField").innerHTML="Wrong Email or Password"
-  }
 
-  
+
 
   getProfile= async ()=>{
     await axios({
@@ -75,7 +72,7 @@ export default class Login extends Component {
     })
       .then((data) =>(this.handleLogin(data)))
 
-      .catch((err) => this.handleError(err));
+      .catch((err) =>  alert(err.response.data.message));
 
     }
   };
@@ -83,10 +80,50 @@ export default class Login extends Component {
 
 
 
+verificationHandler=async(event)=>{
+  event.preventDefault();
+    if (
+      this.state.email === "" ||
+      this.state.password === "" 
+    ){
+      document.getElementById("loginEmptyField").innerHTML =
+      "Please fill the empty fields and try again!";
+    }else {
+    const payload = {
+      email: this.state.email,
+      password: this.state.password,
+    };
+
+    await axios({
+      url: "http://commerchant.herokuapp.com/accounts/resend",
+      method: "POST",
+      data: payload,
+    })
+    .then((response) =>(alert(response.data.message)))
+    .catch((err) => alert(err.response.data.message));
+
+    }
+}
 
 
-  
-  
+
+passwordForgetHandler=async(event)=>{
+  event.preventDefault();
+ 
+  const payload = {
+    email: this.state.email,
+    password: this.state.password,
+  };
+
+  await axios({
+    url: "http://commerchant.herokuapp.com/accounts/forgetpass",
+    method: "POST",
+    data: payload,
+  })
+    .then((response) =>(alert(response.data.message + "\n \n You can change you password from Profile page")))
+    .catch((err) => alert(err.response.data.message));
+}
+
 
   handlechange = (event) => {
     const target = event.target;
@@ -136,7 +173,7 @@ export default class Login extends Component {
                   </div>
                 </div>
               </div>
-
+              
               <div className="row">
                 <div className="col-md-12">
                 <p style={{ color: "red" }} id="loginEmptyField"></p>
@@ -148,6 +185,7 @@ export default class Login extends Component {
                   </button>
                   <div className="clearfix"></div>
                 </div>
+                <p onClick={this.passwordForgetHandler} id="forgetPassword" style={{ float:"left", fontSize:"12px", paddingLeft:"10px",paddingRight:"5px",cursor:"pointer"}}>  Forget Password</p>  <p onClick={this.verificationHandler}  id="verification" style={{  float:"left", fontSize:"12px", paddingLeft:"10px",cursor:"pointer"}}>Resend Verification mail</p>
 
               </div>
               <Label>{this.state.isSuccess}</Label>

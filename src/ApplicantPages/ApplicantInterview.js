@@ -33,7 +33,7 @@ export default class ApplicantInterview extends Component {
         })
           .then(
             (response) => (
-              this.setState({ interview: response.data.payload.interview })| console.log(response) | this.setted(true)
+              this.setState({ interview: response.data.payload.interview }) | this.setted(true)
             )
           )
           .catch((err) => console.log(err) | this.setted(false));

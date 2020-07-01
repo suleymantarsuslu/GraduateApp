@@ -12,120 +12,84 @@ export default class Applicants extends Component {
         contact: "",
         password: "",
       },
-    ],
+        ],
+        backgroundColors:{created:"#F08080", edited:"#F7DC6F", submited:"#F7DC6F", checked:"#F7DC6F", updateRequested:"#00FFFF", updated:"#F7DC6F", confirmed:"#6BC608", rejected:"#F08080", assessed:"#A569BD", accepted:"#F4F6F7 ", announced:"#F4F6F7"},
+ 
 
-    applicationFiles:[]
-
-
-
-
+    applicationFiles: [],
+    applicantsNeeded: [],
   };
 
+  checkApplicant = (anApplicationFile) => {
+    this.props.setApplicationFile(anApplicationFile);
+    this.props.setCurrentApplicant(anApplicationFile);
+    this.props.setCurrentPage("Documents");
+  };
 
-checkApplicant=(anApplicant)=>{
-  this.props.setCurrentApplicant(anApplicant.applicant)
-  this.props.setCurrentPage("Documents")
-}
+  componentWillMount = async () => {
+    await this.getApplicants();
+   
+  };
 
-
-  componentWillMount(){
-    this.jwtHandler()
-  }
-
-
-  jwtHandler = async () => {
+  getApplicants = async () => {
     await axios({
       url: "http://commerchant.herokuapp.com/applications/all",
       method: "GET",
       headers: {
-        Authorization : this.props.token
-       },
+        Authorization: this.props.token,
+      },
     })
-        .then((response) =>(
-        this.setState({ applicationFiles: response.data.payload.applications })
+      .then((response) =>
+        this.setState({ applicationFiles: response.data.payload.applications }
         )
       )
       .catch((err) => console.log(err));
-      console.log(this.state.applicationFiles)
   };
 
-
-
-
-
+  
 
   render() {
     return (
       <div>
-        <div class="content">
-          <div class="container-fluid">
-            <div class="row">
-              <div class="col-md-12">
-                <div class="card strpied-tabled-with-hover">
-                  <div class="card-header ">
-                    <h4 class="card-title">Applicants</h4>
+        <div className="content">
+          <div className="container-fluid">
+            <div className="row">
+              <div className="col-md-12">
+                <div className="card strpied-tabled-with-hover">
+                  <div className="card-header ">
+                    <h4 className="card-title">Applicants</h4>
                   </div>
-                  <div class="card-body table-full-width table-responsive">
-                    <table class="table table-hover table-striped">
+                  <div className="card-body table-full-width table-responsive">
+                    <table className="table table-hover table-striped">
                       <thead>
                         <tr>
                           <th>Applicant</th>
-                          <th>Documents</th>
-                          <th>Upload Date</th>
-                          <th>Action</th>
-                          <th>Details</th>
+                          <th>Status</th>
+                          <th>Email</th>
+                          <th>Program</th>
+                        
                         </tr>
                       </thead>
                       <tbody>
-                      {this.state.applicationFiles.map((anApplication) => (
-                        
-                      <tr onClick={()=> this.checkApplicant(anApplication)}>
-                          <td>{anApplication.applicant.name} {anApplication.applicant.surname}</td>
-                          <td>
-                            <img
-                              src={require("../assets/img/confirmed.png")}
-                              alt=""
-                              width="50px"
-                              height="25px"
-                            />
-                          </td>
-                          <td>01.02.2020 08:55</td>
-                          <td></td>
-                          <td>Documents has been checked and confirmed.</td>
-                        </tr>
+                        {this.state.applicationFiles.map((anApplication) => (
+                          <tr
+                            key={anApplication._id}
+                            onClick={() => this.checkApplicant(anApplication)}
+                            style={{cursor:"pointer", backgroundColor:this.state.backgroundColors[anApplication.status]}}
+                          >
+                            <td>
+                              {anApplication.applicant.name}{" "}
+                              {anApplication.applicant.surname}
+                            </td>
+                            <td>
+                              {anApplication.status}
+                            </td>
+                            <td>{anApplication.applicant.email}</td>
 
-
-
-                      ))}
-                        <tr>
-                          <td>John Doe</td>
-                          <td>
-                            <img
-                              src={require("../assets/img/confirmed.png")}
-                              alt=""
-                              width="50px"
-                              height="25px"
-                            />
-                          </td>
-                          <td>01.02.2020 08:55</td>
-                          <td></td>
-                          <td>Documents has been checked and confirmed.</td>
-                        </tr>
-                        <tr>
-                          <td>Maie Swift</td>
-                          <td>
-                            <img
-                              src={require("../assets/img/confirmed.png")}
-                              alt=""
-                              width="40%"
-                              height="28%"
-                            />
-                          </td>
-                          <td></td>
-                          <td></td>
-                          <td>Documents are missing.</td>
-                        </tr>
-                        
+                            <td>{anApplication.program.name}</td>
+                          </tr>
+                        ))}
+                          
                       </tbody>
                     </table>
                   </div>

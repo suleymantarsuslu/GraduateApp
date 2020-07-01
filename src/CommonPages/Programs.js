@@ -120,15 +120,18 @@ seperate=()=>{
                                                 <th>Application Deadline</th>
                                             </tr>
                                         </thead>
+                                        <tbody>
                                         {this.state.doctorals.map((aProgram) => (
-                                            <tr key={aProgram._id}>
-                                                
+                                           
+                                            <tr  key={aProgram._id}>
+                                              
                                                 <td>{aProgram.name}</td>
                                                 <td>{aProgram.department}</td>
-                                                <td>{moment(aProgram.announceDate).format("dddd, MMM DD    HH:mm ")}</td>
-                                                <td>{moment(aProgram.applicationDeadline).format("dddd, MMM DD    HH:mm ")}</td>
+                                                <td>{ moment(aProgram.announceDate).format("dddd, MMM DD   HH:mm ")}</td>
+                                                <td>{ moment(aProgram.applicationDeadline).format("dddd, MMM DD   HH:mm ")}</td>
                                             </tr>
                                             ))}
+                                        </tbody>
                                     </table>
                                 </div>
                             </div>

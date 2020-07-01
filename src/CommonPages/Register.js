@@ -4,7 +4,7 @@ import "../assets/img/favicon.ico";
 import { Button, Form, FormGroup, Label, Input, FormText } from "reactstrap";
 import axios from "axios";
 import ReCAPTCHA from "react-google-recaptcha";
-import emailjs from 'emailjs-com';
+import emailjs from "emailjs-com";
 
 export default class Register extends Component {
   state = {
@@ -20,11 +20,8 @@ export default class Register extends Component {
     password2: "",
   };
 
-
-
-
   componentWillMount() {
-    this.jwtHandler();
+    this.programsBringer();
   }
   componentDidUpdate() {
     console.log(this.state.program);
@@ -44,7 +41,7 @@ export default class Register extends Component {
     const target = event.target;
     const name = target.name;
     const value = target.value;
-
+    document.getElementById("passwordSame").innerHTML = "";
     this.setState({
       [name]: value,
     });
@@ -53,10 +50,10 @@ export default class Register extends Component {
   handleProgram = (event) => {
     const target = event.target;
     const name = target.name;
-    const id = target._id;
+    const value  = target.value;
 
     this.setState({
-      [name]: id,
+      [name]: value,
     });
   };
 
@@ -64,7 +61,7 @@ export default class Register extends Component {
     console.log("reCAPTHA loaded successfuly");
   }
 
-  jwtHandler = async () => {
+  programsBringer = async () => {
     await axios({
       url: "http://commerchant.herokuapp.com/programs/all",
       method: "GET",
@@ -72,7 +69,7 @@ export default class Register extends Component {
       .then((response) =>
         this.setState({ programs: response.data.payload.programs })
       )
-      .catch((response) => console.log(response));
+      .catch((err) =>  alert(err.response.data.message));
   };
 
   change = (event) => {
@@ -111,17 +108,15 @@ export default class Register extends Component {
           address: this.state.address,
         };
 
-        await axios({
-          url: "http://commerchant.herokuapp.com/accounts/register",
-          method: "POST",
-          data: payload,
-        })
-          .then(
-            (response) => (
-              this.setState({ datas: response }), alert(response.data.message)
-            )
-          )
-          .catch((err) => alert(err));
+        await axios.post (
+          "http://commerchant.herokuapp.com/accounts/register",payload
+          // url: "http://commerchant.herokuapp.com/accounts/register",
+          // method: "POST",
+          // data: payload,
+        )
+          .then((response) => {alert(response.data.message +"\n\nVerification mail has been sent.Please check your email and verify your account!")})
+          .catch((err) => {alert(err.response.data.message +"\n"+err.response.data.error)});
+          
       } else {
         document.getElementById("passwordSame").innerHTML =
           "Passwords are not same!";
@@ -131,9 +126,7 @@ export default class Register extends Component {
 
   onloadCallback = function () {
     this.setState({ isVerified: true });
-
-   };
-
+  };
 
   render() {
     return (
@@ -150,7 +143,7 @@ export default class Register extends Component {
                     <div className="form-group">
                       <Label for="name">Name</Label>
                       <Input
-                      required
+                        required
                         type="text"
                         name="name"
                         value={this.state.name}
@@ -187,11 +180,12 @@ export default class Register extends Component {
                         name="program"
                         onChange={this.handleProgram}
                         required
-                        
                       >
-                         <option value="" disabled selected>Select your option</option>
+                        <option value="" disabled selected>
+                          Select your option
+                        </option>
                         {this.state.programs.map((aProgram) => (
-                          <option key={aProgram._id}>{aProgram.name}</option>
+                          <option value={aProgram._id} key={aProgram._id}>{aProgram.name}</option>
                         ))}
                         ;
                       </select>
@@ -212,15 +206,12 @@ export default class Register extends Component {
                   </div>
                 </div>
 
-
-                <input type="submit" value="Send" onClick={this.sendEmail}/>
-
                 <div className="row">
-                  <div className="col-md-6 pl-1">
+                  <div className="col-md-6 pl-1" style={{marginLeft:"10px"}}>
                     <div className="form-group">
                       <Label for="email">Phone</Label>
                       <Input
-                        type="text"
+                        type="tel"
                         name="phone"
                         value={this.state.phone}
                         placeholder="05*********"
