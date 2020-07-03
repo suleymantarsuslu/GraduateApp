@@ -41,6 +41,25 @@ export default class EditProgram extends Component {
       "DEPARTMENT OF INDUSTRIAL DESIGN",
       "DEPARTMENT OF ARCHITECTURAL RESTORATION",
     ],
+
+    programTitles:{
+      coordinator:"",
+      name:"",
+      department:	"",
+      degree:"",
+      description:	"",
+      announceDate:	"",
+      applicationDeadline:"",	
+      alesRequirement:"",
+      sgkRequirement:	"",
+      masterRequirement:"",
+      quota:	"",
+      },
+
+
+
+
+
     name: null,
     departmentString: "",
     departmentArray: [],
@@ -179,15 +198,7 @@ export default class EditProgram extends Component {
     await this.setState({
       coordinator: this.state.currentProgram.coordinator,
       name: this.state.currentProgram.name,
-      departmentArray: this.state.currentProgram.department.split(","),
-      degree: this.state.currentProgram.degree,
-      description: this.state.currentProgram.description,
-      announceDate: this.state.currentProgram.announceDate,
-      applicationDeadline: this.state.currentProgram.applicationDeadline,
-      alesRequirement: this.state.currentProgram.alesRequirement,
-      sgkRequirement: this.state.currentProgram.sgkRequirement,
-      masterRequirement: this.state.currentProgram.masterRequirement,
-      quota: this.state.currentProgram.quota,
+      degree: this.state.currentProgram.degree
     });
   };
 
@@ -219,7 +230,6 @@ export default class EditProgram extends Component {
       url: "http://commerchant.herokuapp.com/programs/" + this.props.program,
       method: "GET",
       headers: {
-        // Authorization: window.localStorage.getItem("token"),
         Authorization: this.props.token,
       },
     })
@@ -263,72 +273,28 @@ export default class EditProgram extends Component {
       sgkRequirement = this.state.changedSgkRequirement;
     }
 
-    const payload = {
-      coordinator: this.state.coordinator,
-      name: this.state.name,
-      department: departments.toString(),
-      degree: this.state.degree,
-      description: this.state.description,
-      announceDate: this.state.announceDate,
-      applicationDeadline: this.state.applicationDeadline,
-      alesRequirement: alesRequirement,
-      sgkRequirement: sgkRequirement,
-      masterRequirement: masterRequirement,
-      quota: this.state.quota,
-    };
 
-    // await axios({
-    //   url:
-    //     "http://commerchant.herokuapp.com/programs"+this.state.currentProgram._id,
-    //   method: "PUT",
-    //   headers: {
-    //     // Authorization: window.localStorage.getItem("token"),
-    //     Authorization: this.props.token,
-    //   },
-    //   data: payload,
-    // })
-    //   .then(
-    //     (response) => (
-    //       this.setState({ datas: response })| alert(response.data.message)
-    //     )
-    //   )
-    //   .catch((err) => console.log(err));
 
-    var myHeaders = new Headers();
-    myHeaders.append("Authorization", this.props.token);
-    myHeaders.append("Content-Type", "application/json");
-
-    var raw = JSON.stringify([
-      {
+  const payload = {
         coordinator: this.state.coordinator,
         name: this.state.name,
-        department: departments.toString(),
-        degree: this.state.degree,
-        description: this.state.description,
-        announceDate: this.state.announceDate,
-        applicationDeadline: this.state.applicationDeadline,
-        alesRequirement: alesRequirement,
-        sgkRequirement: sgkRequirement,
-        masterRequirement: masterRequirement,
-        quota: this.state.quota,
-      },
-    ]);
 
-    var requestOptions = {
-      method: "PUT",
-      headers: myHeaders,
-      body: raw,
-      redirect: "follow",
-    };
 
-    fetch(
-      "http://commerchant.herokuapp.com/programs/" +
-        this.state.currentProgram._id,
-      requestOptions
-    )
-      .then((response) => response.text())
-      .then((result) => alert(result.data.message))
-      .catch((error) => console.log("error", error));
+  };
+
+await axios({
+url:"http://commerchant.herokuapp.com/programs/" +this.props.program,
+method: "PUT",
+headers: {
+  Authorization: this.props.token,
+},
+data: payload,
+})
+.then(
+  (response) => alert(response.data.message)
+  )
+
+.catch((err) => alert(err.response.data.message));
   };
 
   render() {
@@ -430,7 +396,7 @@ export default class EditProgram extends Component {
                               id="vcoordinator"
                               onChange={this.handleCoordinator}
                             >
-                              <option value="" disabled selected>
+                              <option  disabled selected>
                                 {this.state.currentProgram.coordinator.name}{" "}
                                 {this.state.currentProgram.coordinator.surname}
                               </option>
@@ -445,8 +411,8 @@ export default class EditProgram extends Component {
                         </div>
                       </div>
 
-                      <div class="row">
-                        <div class="col-md-12 pr-1">
+                      <div className="row">
+                        <div className="col-md-12 pr-1">
                           <label>
                             Departments{" "}
                             <h13
@@ -501,7 +467,7 @@ export default class EditProgram extends Component {
                         </div>
                       </div>
 
-                      <div class="form-group">
+                      <div className="form-group">
                         <label>Requirements</label>
                         <h6></h6>
                         <h13

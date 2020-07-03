@@ -425,10 +425,11 @@ export default class Profile extends Component {
                           <tr>
                             <td>
                               <p>Passport</p>
+                              <h7 style={{color:"red", fontSize:"12px"}}>Needed only if you are foreign!</h7>
                             </td>
 
                             <td>
-                            <h7>Needed only if you are foreign!</h7>
+                            
                               <div className="form-group rounded">
                                 
                                 <label htmlFor="passportCopyInput">
@@ -451,6 +452,7 @@ export default class Profile extends Component {
 
                               <p id="passportCopy"></p>
                             </td>
+                            
                           </tr>
                           
                           <tr>

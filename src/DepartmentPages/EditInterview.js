@@ -125,7 +125,7 @@ data: payload,
                           <div className="form-group">
                             <label>Date</label>
                             <br />
-                            {moment(this.props.currentInterview.date).format("dddd, MMM DD,  HH:mm ")} 
+                            {this.props.currentInterview.date} 
                             <p
                               onClick={this.handleDate}
                               style={{ color: "blue", cursor: "pointer" }}

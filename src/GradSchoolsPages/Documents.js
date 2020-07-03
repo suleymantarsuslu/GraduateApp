@@ -130,11 +130,10 @@ export default class Documents extends Component {
 
     const payload = {
       to: this.state.applicationFile.applicant.email,
-      title: "Document Rejection",
+      title: "Rejected or Missing Document",
       note:
-        " You need to update or upload falloving document:  " +
-        value +
-        " document",
+        " You need to update or upload following document:  " +
+        value 
     };
     await axios({
       url: "http://commerchant.herokuapp.com/notifications",
@@ -172,12 +171,12 @@ export default class Documents extends Component {
       };
       title= "Rejection"
       message = "We are sorry to inform you, You are not accepted for the program you applied."
-    } else {
+    } else if(name === "confirmed"){
       payload = {
-        status: "checked",
+        status: "confirmed",
       };
-      title= "Documents are checked!"
-      message = "Your documents are checked and accepted!"
+      title= "Documents are confirmed!"
+      message = "Your documents are confirmed and accepted!"
     }
 
   
@@ -506,7 +505,7 @@ export default class Documents extends Component {
                           <td>
                             <button
                               className="btn btn-info btn-fill pull-right"
-                              name="confirmed"
+                              name="checked"
                               onClick={this.rejectOrAccept}
                             >
                               Confirm Documents

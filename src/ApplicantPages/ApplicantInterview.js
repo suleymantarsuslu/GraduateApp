@@ -45,7 +45,7 @@ export default class ApplicantInterview extends Component {
                 <p id="notSet" style={{color:"red"}}>Your Interview Has Been Not Set Yet!</p>
             </div>
             <div>
-                <p id="date" hidden>Your Interview date: {moment(this.state.interview.date).format("dddd, MMM DD,  HH:mm ")}</p>
+                <p id="date" hidden>Your Interview date: {this.state.interview.date}</p>
                 <p id="location" hidden>Your Interview Location is: {this.state.interview.location}</p>
             </div>
             </div>

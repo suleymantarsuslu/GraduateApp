@@ -38,7 +38,7 @@ export default class Applicants extends Component {
   checkApplicant = (anApplicationandInterview) => {
     this.props.setCurrentApplicant(anApplicationandInterview.applicant);
     this.props.setCurrentInterview(anApplicationandInterview.interview);
-    if (anApplicationandInterview.interviewDate === "not setted") {
+    if (anApplicationandInterview.interviewDate === "") {
       this.props.setCurrentPage("CreateInterview");
     } else {
       this.props.setCurrentPage("EditInterview");
@@ -99,10 +99,10 @@ export default class Applicants extends Component {
           grade: grade,
           status: anApplication.status,
           applicant: anApplication.applicant,
-          interviewDate: moment(this.state.settedInterview.date).format(
-            "dddd, MMM DD,  HH:mm "
-          ),
-
+          // interviewDate: moment(this.state.settedInterview.date).format(
+          //   "dddd, MMM DD,  HH:mm "
+          // ),
+          interviewDate: this.state.settedInterview.date,
           interviewLocation: this.state.settedInterview.location,
           interview: this.state.settedInterview,
         };

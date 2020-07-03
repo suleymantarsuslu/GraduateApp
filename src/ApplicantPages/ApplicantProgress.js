@@ -44,13 +44,16 @@ export default class ApplicantProgress extends Component {
                 return 5;
                 case "assessed":
                     return 8;
+                    case "updated":
+                        return 4;
                 case "rejected":
                 return 8;
                 case "interviewSetted":
-                return 7;
+                return 6;
                 case "accepted":
                 return 8;
-        
+                case "announced":
+                    return 8;
               default:
                 return 0;
          
